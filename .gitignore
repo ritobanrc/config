@@ -1,2 +1,6 @@
+# Vim Spelling caches
 nvim/spell/*.spl
+*.sug
+
+# Netrw History
 .netrwhist
