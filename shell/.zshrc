@@ -1,7 +1,7 @@
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 #
-eval "$(starship init zsh)"
+#eval "$(starship init zsh)"
 eval "$(zoxide init zsh)"
 
 #[[ -s /etc/profile.d/autojump.zsh ]] && source /etc/profile.d/autojump.zsh
@@ -13,7 +13,7 @@ export ZSH="/home/ritoban/.oh-my-zsh"
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="agnoster"
+ZSH_THEME="robbyrussell"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -149,5 +149,3 @@ lfcd () {
     fi
 }
 bindkey -s '^o' 'lfcd\n'
-
-source /home/ritoban/.config/broot/launcher/bash/br
