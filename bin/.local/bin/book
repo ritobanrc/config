@@ -1,0 +1,25 @@
+#!/bin/bash
+
+cd $HOME/Downloads/ebooks/
+
+name=$(fd -e epub -e pdf -e djvu | while read line ; 
+do
+    basename "$line"
+done | fzf)
+
+echo $name
+
+filename=$(fd "$name")
+echo "Opening " $filename
+
+case "$name" in 
+*.pdf )
+    nohup zathura "$filename" & ;;
+*.djvu )
+    nohup evince "$filename" & ;;
+*.epub )
+    #2>/dev/null 1>&2 nohup ebook-viewer "$filename" & 
+    nohup foliate "$filename" & ;;
+esac
+
+sleep 3

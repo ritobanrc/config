@@ -1,0 +1,33 @@
+#!/bin/bash
+
+#[ -f "$2" ] && cp "$2" ~/.config/wall.png && notify-send -i "$HOME/.config/wall.png" "Wallpaper changed."
+
+#[ -d "$2" ] && cp "$" ~/.config/wall.png && notify-send -i "$HOME/.config/wall.png" "Random Wallpaper chosen."
+
+export DISPLAY=":0.0"
+
+wallpaper_dir="/home/ritoban/pix/wall"
+
+for m in $(xrandr --query | grep " connected" | cut -d" " -f1); do
+    wallpaper_file=$(fd . "$wallpaper_dir" -e "jpg" -e "jpeg" -e "png" -E "nsfw" --type f | shuf -n 1)
+
+    if [ "$1" == "-f" ]; then
+        echo "Using file $2"
+        wallpaper_file="$2"
+    fi
+
+    if [ "$1" == "-p" ]; then
+        wallpaper_file=$(fd . "$wallpaper_dir/nsfw" -e "jpg" -e "jpeg" -e "png"  --type f | shuf -n 1)
+    fi
+
+    if [ "$1" == "-r" ]; then
+        wallpaper_file=$(fd . "$wallpaper_dir" -e "jpg" -e "jpeg" -e "png"  --type f | shuf -n 1)
+    fi
+
+    notify-send -i $wallpaper_file "Random wallpaper applied to monitor $m"
+
+    echo "Setting $m to wallpaper $wallpaper_file"
+
+    #xfconf-query -c xfce4-desktop  -p /backdrop/screen0/monitor$m/workspace0/last-image -s "$wallpaper_file"
+    xwallpaper --output "$m" --zoom "$wallpaper_file" 
+done
