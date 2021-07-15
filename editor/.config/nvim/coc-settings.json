@@ -1,5 +1,17 @@
 {
     "rust-analyzer.updates.channel": "nightly",
     "rust-analyzer.enable": true,
-    "rust-analyzer.inlayHints.chainingHints": false
+    "rust-analyzer.inlayHints.chainingHints": false,
+    "languageserver": {
+        "ccls": {
+            "command": "ccls",
+            "filetypes": ["c", "cpp", "objc", "objcpp"],
+            "rootpatterns": [".ccls", "compile_commands.json", ".vim/", ".git/", ".hg/"],
+            "initializationoptions": {
+                "cache": {
+                    "directory": "/tmp/ccls"
+                }
+            }
+        }
+    }
 }

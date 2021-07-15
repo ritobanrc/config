@@ -1,0 +1,11 @@
+#!/bin/bash
+
+cd $HOME/config
+
+name=$(fd -H -E .git | fzf)
+
+echo $name
+
+echo "Opening " $name
+
+nvim $name
