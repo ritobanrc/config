@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Set Background
+Comment=Reset the desktop background to a random wallpaper
+Exec=/home/ritoban/.local/bin/setbg
+Icon=photolayoutseditor
+Terminal=false
+Type=Application
+Path=
+StartupNotify=false

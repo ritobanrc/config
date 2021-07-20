@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Choose Wallpaper
+Comment=Open SXIV to choose a wallpaper
+Exec=/home/ritoban/bin/pickbg
+Icon=/home/ritoban/pix/icons/pickbg.png
+Terminal=false
+Type=Application

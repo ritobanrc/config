@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Book
+Comment=Open a Book
+Exec=alacritty -e /home/ritoban/.local/bin/book
+Icon=bookworm
+Terminal=false
+Type=Application
+Categories=Education;
+
+Path=
+StartupNotify=false

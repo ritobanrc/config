@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Update Monitors
+Comment=Setup multiple monitors correctly
+Exec=/home/ritoban/.local/bin/monitor
+Icon=preferences-desktop-display
+Terminal=false
+Type=Application
+Path=
+StartupNotify=false

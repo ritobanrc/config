@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Refresh Keymaps
+Comment=Reapply keyboard remappings with setxkbmap
+Exec=/home/ritoban/.local/bin/keymaps
+Icon=preferences-desktop-keyboard-shortcuts
+Terminal=false
+Type=Application
+Path=
+StartupNotify=false
