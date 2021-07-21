@@ -14,9 +14,13 @@ call plug#begin('~/.local/share/nvim/plugged')
 
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/goyo.vim'
-Plug 'neoclide/coc.nvim', { 'branch': 'release' }
+"Plug 'neoclide/coc.nvim', { 'branch': 'release' }
 Plug 'itchyny/lightline.vim'
 Plug 'daviesjamie/vim-base16-lightline'
+
+Plug 'neovim/nvim-lspconfig'
+Plug 'hrsh7th/nvim-compe'
+Plug 'windwp/nvim-autopairs'
 
 Plug 'preservim/nerdtree'
 "Plug 'ms-jpq/chadtree', {'branch': 'chad', 'do': 'python3 -m chadtree deps'}
@@ -48,6 +52,7 @@ Plug '907th/vim-auto-save'
 
 Plug 'preservim/tagbar'
 
+Plug 'ray-x/lsp_signature.nvim'
 
 "Plug 'SirVer/ultisnips'
 "Plug 'honza/vim-snippets'
@@ -106,7 +111,7 @@ if has('mouse_sgr')
 endif
 
 " syntax highlighting
-syntax enable
+syntax on
 
 set linebreak breakindent
 set list listchars=tab:>>,trail:~
@@ -270,8 +275,6 @@ function! NewVSplit()
     let &filetype = current
 endfunction
 
-
-
 let g:netrw_preview = 1
 let g:netrw_browse_split = 2
 let g:netrw_winsize = 25
@@ -279,7 +282,7 @@ let g:netrw_winsize = 25
 " Goyo
 nnoremap <leader>g :Goyo<CR>
 
-
+" TODO: Fix lightline to make it work without COC
 " Lightline
 let g:lightline = {
       \ 'colorscheme': 'base16',
@@ -339,58 +342,103 @@ set undodir=~/.vimundo
 set undofile
 
 
-""""""""""  Completion """""""""""
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-function! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
-" Use <c-space> for trigger completion.
-inoremap <silent><expr> <c-space> coc#refresh()
+" Pairs
+lua << EOF
+require('nvim-autopairs').setup()
+EOF
 
-nnoremap <leader>i <Plug>(coc-codeaction)
-nmap <leader>qf  <Plug>(coc-fix-current)
-
+"----------------------------------  Completion ---------------------------------
 set completeopt-=menu
 set completeopt+=menuone   " show the popup menu even when there is only 1 match
 set completeopt-=longest   " don't insert the longest common text
-"set completeopt-=preview   " don't show preview window
-"set completeopt+=noinsert  " don't insert any text until user chooses a match
 set completeopt-=noselect  " select first match
-
 set complete+=kspell "" Complete based on spell checkig
+set updatetime=300   " Smaller updatetime for CursorHold & CursorHoldI
+set shortmess+=c   " don't give |ins-completion-menu| messages.
+set signcolumn=yes  " always show signcolumns
 
+" LSP config (the mappings used in the default file don't quite work right)
+nnoremap <silent> gd <cmd>lua vim.lsp.buf.definition()<CR>
+nnoremap <silent> gD <cmd>lua vim.lsp.buf.declaration()<CR>
+nnoremap <silent> gr <cmd>lua vim.lsp.buf.references()<CR>
+nnoremap <silent> gi <cmd>lua vim.lsp.buf.implementation()<CR>
+nnoremap <silent> <leader>K <cmd>lua vim.lsp.buf.hover()<CR>
+nnoremap <silent> <leader>k <cmd>lua vim.lsp.buf.signature_help()<CR>
+nnoremap <silent> <leader>rn <cmd>lua vim.lsp.buf.rename()<CR>
+nnoremap <silent> <C-n> <cmd>lua vim.lsp.diagnostic.goto_prev()<CR>
+nnoremap <silent> <C-p> <cmd>lua vim.lsp.diagnostic.goto_next()<CR>
 
-" Use <cr> for confirm completion, `<C-g>u` means break undo chain at current position.
-" Coc only does snippet and additional edit on confirm.
-inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-nnoremap <silent> <leader>k :call <SID>show_documentation()<CR>
-function! s:show_documentation()
-  if &filetype == 'vim'
-    execute 'h '.expand('<cword>')
-  else
-    call CocActionAsync('doHover')
-  endif
-endfunction
+let g:compe = {}
+let g:compe.enabled = v:true
+let g:compe.autocomplete = v:true
+let g:compe.debug = v:false
+let g:compe.min_length = 1
+let g:compe.preselect = 'enable'
+let g:compe.throttle_time = 80
+let g:compe.source_timeout = 200
+let g:compe.resolve_timeout = 800
+let g:compe.incomplete_delay = 400
+let g:compe.max_abbr_width = 100
+let g:compe.max_kind_width = 100
+let g:compe.max_menu_width = 100
+let g:compe.documentation = v:true
 
-" Smaller updatetime for CursorHold & CursorHoldI
-set updatetime=300
+let g:compe.source = {}
+let g:compe.source.path = v:true
+let g:compe.source.buffer = v:true
+let g:compe.source.calc = v:true
+let g:compe.source.nvim_lsp = v:true
+let g:compe.source.nvim_lua = v:true
+let g:compe.source.vsnip = v:false
+let g:compe.source.ultisnips = v:false
+let g:compe.source.luasnip = v:false
+let g:compe.source.omni = v:false
+let g:compe.source.emoji = v:true
 
-" don't give |ins-completion-menu| messages.
-set shortmess+=c
+inoremap <silent><expr> <C-Space> compe#complete()
+inoremap <silent><expr> <CR>      compe#confirm('<CR>')
+inoremap <silent><expr> <C-e>     compe#close('<C-e>')
+" Figure out what these mappings are supposed to do
+inoremap <silent><expr> <C-f>     compe#scroll({ 'delta': +4 })  
+inoremap <silent><expr> <C-d>     compe#scroll({ 'delta': -4 })
 
-" always show signcolumns
-set signcolumn=yes
-autocmd CursorHold * silent call CocActionAsync('highlight')
+lua << EOF
+local nvim_lsp = require'lspconfig'
+local on_attach = function(client, bufnr)
+    require'lsp_signature'.on_attach()
+end
 
-highlight default CocHighlightText  guibg=#332211 ctermbg=223`
-" Remap for rename current word 
-nmap <leader>rn <Plug>(coc-rename)
-nmap <leader>q :CocFix<CR>
+nvim_lsp.pyright.setup{on_attach=on_attach}
+
+nvim_lsp.rust_analyzer.setup({
+    on_attach=on_attach,
+    settings = {
+        ["rust-analyzer"] = {
+            assist = {
+                importGranularity = "module",
+                importPrefix = "by_self",
+            },
+            cargo = {
+                loadOutDirsFromCheck = true
+            },
+            procMacro = {
+                enable = true
+            },
+        }
+    }
+})
+
+nvim_lsp.ccls.setup{ on_attach=on_attach }
+
+vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
+  vim.lsp.diagnostic.on_publish_diagnostics, {
+    virtual_text = true,
+    signs = true,
+    update_in_insert = true,
+  }
+)
+EOF
+
 
 """"""""" Tables
 
@@ -407,13 +455,6 @@ inoreabbrev <expr> <bar><bar>
 inoreabbrev <expr> __
           \ <SID>isAtStartOfLine('__') ?
           \ '<c-o>:silent! TableModeDisable<cr>' : '__'
-
-
-""""""""""" Gotos '"""""""""""""""
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
 
 
 """"""""""" Terminal Mode Mappings '""""""""""""
@@ -449,7 +490,7 @@ map L $
 " quickly correct spelling mistakes
 inoremap <C-k> <c-g>u<Esc>[s1z=`]a<c-g>u
 
-let g:vimspector_enable_mappings = 'HUMAN'
+"let g:vimspector_enable_mappings = 'HUMAN'
 
 " -------- markdown2ctags
 " Add support for markdown files in tagbar.
