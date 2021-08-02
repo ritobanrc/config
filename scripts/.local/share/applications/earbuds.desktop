@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Connect Earbuds
+Comment=Connect to Bluetooth Earbuds
+Exec=/home/ritoban/.local/bin/earbud
+Icon=preferences-desktop-display
+Terminal=false
+Type=Application
+Path=
+StartupNotify=false
