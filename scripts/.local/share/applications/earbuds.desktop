@@ -2,7 +2,7 @@
 Name=Connect Earbuds
 Comment=Connect to Bluetooth Earbuds
 Exec=/home/ritoban/.local/bin/earbud
-Icon=preferences-desktop-display
+Icon=audio-headphones
 Terminal=false
 Type=Application
 Path=

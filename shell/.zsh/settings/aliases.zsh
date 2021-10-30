@@ -28,7 +28,7 @@ fi
 alias gp='git pull'
 alias gf='git fetch'
 alias gc='git clone'
-alias gs='git stash'
+alias gs='git status'
 alias gb='git branch'
 alias gm='git merge'
 alias gch='git checkout'
@@ -38,7 +38,7 @@ alias gpo='git push origin HEAD'
 alias gwch='git whatchanged -p --abbrev-commit --pretty=medium'
 
 alias pls='pacman -Ql'        # list files
-alias pup='sudo pacman -Syyu' # update
+alias pup='sudo pacman -Syu' # update
 alias pin='sudo pacman -S'    # install
 alias pun='sudo pacman -Rs'   # remove
 alias pcc='sudo pacman -Scc'  # clear cache
@@ -72,3 +72,7 @@ alias timer='time read -p "Press enter to stop"'
 # shellcheck disable=2142
 alias xp='xprop | awk -F\"'" '/CLASS/ {printf \"NAME = %s\nCLASS = %s\n\", \$2, \$4}'"
 alias get='curl --continue-at - --location --progress-bar --remote-name --remote-time'
+
+alias ex=""
+
+alias ssh="ssh -Y"

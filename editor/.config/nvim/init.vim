@@ -52,7 +52,10 @@ Plug '907th/vim-auto-save'
 
 Plug 'preservim/tagbar'
 
+" TODO: switch to lsp-saga
 Plug 'ray-x/lsp_signature.nvim'
+
+Plug 'lervag/vimtex'
 
 "Plug 'SirVer/ultisnips'
 "Plug 'honza/vim-snippets'
@@ -130,10 +133,10 @@ function! MyHighlights() abort
     highlight EndOfBuffer guibg=none ctermbg=none
 endfunction
 
-augroup MyColors
-    autocmd!
-    autocmd ColorScheme * call MyHighlights()
-augroup END
+"augroup MyColors
+    "autocmd!
+    "autocmd ColorScheme * call MyHighlights()
+"augroup END
 
 let base16colorspace=256  " Access colors present in 256 colorspace
 "colorscheme base16-oceanicnext
@@ -186,7 +189,8 @@ command! W execute 'silent w !sudo tee % >/dev/null' | edit!
 " ------ basic maps ------
 "
 " Unbind some useless/annoying default key bindings.
-nmap Q <Nop> " 'Q' in normal mode enters Ex mode. You almost never want this.
+" Q in normal mode enters Ex mode. You almost never want this.
+nmap Q <Nop>    
 "
 " deleting one character shouldn't be put into clipboard
 nnoremap x "_x
@@ -194,9 +198,6 @@ vnoremap x "_x
 
 " open ranger as a file chooser using the function below
 "nnoremap <leader>r :call <SID>ranger()<CR>
-
-" match string to switch buffer
-nnoremap <Leader>b :let b:buf = input('Match: ')<Bar>call <SID>bufferselect(b:buf)<CR>
 
 " change windows with ctrl+(hjkl)
 nnoremap <C-J> <C-W><C-J>
@@ -207,8 +208,6 @@ nnoremap <C-H> <C-W><C-H>
 " alt defaults
 nnoremap 0 ^
 nnoremap Y y$
-nnoremap n nzzzv
-nnoremap N Nzzzv
 
 " Magic searching
 nnoremap ? ?\v
@@ -224,9 +223,6 @@ nnoremap <Tab> ==1j
 " re-visual text after changing indent
 vnoremap > >gv
 vnoremap < <gv
-
-" toggle line numbers, nn (no number)
-nnoremap <silent> <Leader>nn :set number!
 
 " gj/k but preserve numbered jumps ie: 12j or 45k
 "nmap <buffer><silent><expr>j v:count ? 'j' : 'gj'
@@ -278,6 +274,10 @@ endfunction
 let g:netrw_preview = 1
 let g:netrw_browse_split = 2
 let g:netrw_winsize = 25
+
+" Change Filetype mappings
+nnoremap <leader>tx :set filetype=tex<CR>
+nnoremap <leader>md :set filetype=markdown<CR>
 
 " Goyo
 nnoremap <leader>g :Goyo<CR>
@@ -476,6 +476,8 @@ nnoremap <leader>ss :set spell spelllang=es keymap=accents<CR>
 " Arrows
 inoremap <C-l> →<space>
 inoremap <C-h> <space>←<space>
+inoremap <C-j> ↓<space>
+inoremap <C-k> ↑<space>
 
 " opposite of gJ
 nnoremap K  i <enter><esc>k$x
@@ -488,7 +490,7 @@ map H ^
 map L $
 
 " quickly correct spelling mistakes
-inoremap <C-k> <c-g>u<Esc>[s1z=`]a<c-g>u
+inoremap <C-s> <c-g>u<Esc>[s1z=`]a<c-g>u
 
 "let g:vimspector_enable_mappings = 'HUMAN'
 

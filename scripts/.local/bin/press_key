@@ -1,0 +1,5 @@
+#!/bin/bash
+for pid in $(xdotool search --name "opengl_2d")
+do
+    xdotool type --window $pid "$1"
+done

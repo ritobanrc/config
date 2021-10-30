@@ -1,0 +1,8 @@
+#!/bin/bash
+
+cd $HOME/dox/capstone/papers
+filename=$(fd -e pdf | fzf)
+
+nohup zathura "$filename" &
+
+sleep 1

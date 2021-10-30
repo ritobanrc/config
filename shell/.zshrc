@@ -1,7 +1,7 @@
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 #
-eval "$(starship init zsh)"
+#eval "$(starship init zsh)"
 eval "$(zoxide init zsh)"
 
 #[[ -s /etc/profile.d/autojump.zsh ]] && source /etc/profile.d/autojump.zsh
@@ -108,9 +108,10 @@ export PATH=$PATH:$PHYSBAM/Scripts/misc:$PHYSBAM/Projects/opengl_3d:$PHYSBAM/Pro
 alias o='$PHYSBAM/Projects/opengl_3d/opengl_3d$SUFFIX'
 alias o2='$PHYSBAM/Projects/opengl_2d/opengl_2d$SUFFIX'
 alias o3='$PHYSBAM/Projects/opengl_3d/opengl_3d$SUFFIX'
-alias cs='nice scons --warn=no-duplicate-environment --warn=no-deprecated -Q --implicit-cache -u -j 4'
-alias csd='cs TYPE=debug'
+alias -g cs='nice scons --warn=no-duplicate-environment --warn=no-deprecated -Q --implicit-cache -u -j 16'
+alias -g csd='cs TYPE=debug'
 alias pb='cd $PHYSBAM'
+
 
 #
 #
@@ -149,3 +150,13 @@ lfcd () {
     fi
 }
 bindkey -s '^o' 'lfcd\n'
+
+loop () {
+    while ; do 
+        $@ ; 
+        sleep 1; 
+    done
+}
+
+# Print a newline before the prompt
+precmd() { print "" }

@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Pen
+Comment=Load Pen Settings
+Exec=/home/ritoban/.local/bin/pen
+Icon=pen
+Terminal=false
+Type=Application
+Categories=Education;
+
+Path=
+StartupNotify=false

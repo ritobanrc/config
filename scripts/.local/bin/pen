@@ -1,7 +1,14 @@
 #!/bin/bash
 
-id=$(xinput | sed '/Pen/s/.*id=\([0-9]*\).*/\1/;t;d' | head -1)
+pen_id=$(xinput | sed '/Pen/s/.*id=\([0-9]*\).*/\1/;t;d' | head -1)
 
 display=$(xrandr | grep " connected " | awk '{ print$1 }' | tail -1)
 
-xinput map-to-output $id $display
+xinput map-to-output $pen_id $display
+
+tablet_id=$(xinput | sed '/Tablet/s/.*id=\([0-9]*\).*/\1/;t;d' | head -1)
+
+# Huion tablet has 8 buttons, but i'm not sure what the middle four do, so I've mapped them to button 99
+xinput set-button-map $tablet_id 10 11 12 99 99 99 99 13 14 15 16 17
+
+xbindkeys --poll-rc

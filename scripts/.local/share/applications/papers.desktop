@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Papers
+Comment=Read a Paper
+Exec=alacritty -e /home/ritoban/.local/bin/paper
+Icon=bookworm
+Terminal=false
+Type=Application
+Categories=Education;
+
+Path=
+StartupNotify=false
