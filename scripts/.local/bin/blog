@@ -1,0 +1,12 @@
+#!/bin/bash
+
+
+cd $HOME/dox/blog/_posts
+
+if [ $1 == "new" ]; then
+    filename="$(date +%Y-%m-%d)-$2.md"
+else
+    filename=$(fd -e .md | fzf)
+fi
+
+nvim "$filename"

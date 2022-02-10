@@ -2,7 +2,7 @@
 Name=Papers
 Comment=Read a Paper
 Exec=alacritty -e /home/ritoban/.local/bin/paper
-Icon=bookworm
+Icon=labplot-xy-interpolation-curve
 Terminal=false
 Type=Application
 Categories=Education;

@@ -140,8 +140,9 @@ endfunction
 
 let base16colorspace=256  " Access colors present in 256 colorspace
 "colorscheme base16-oceanicnext
-colorscheme base16-atelier-estuary
+"colorscheme base16-atelier-estuary
 "colorscheme base16-seti
+colorscheme base16-solarflare
 
 
 if $TERM !=? 'linux'

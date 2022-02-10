@@ -2,26 +2,26 @@
 name = "iron" # Not needed for a single remote
 host = "iron" # Could also be a ssh config entry
 ssh_port = 2222 # defaults to 22
-temp_dir = "~/dev" # Default is "~/remote-builds"
+#temp_dir = "~/dev" # Default is "~/remote-builds"
 env = "~/.profile" # Default is "/etc/profile"
 
 [[remote]]
 name = "gallium" # Not needed for a single remote
 host = "gallium" # Could also be a ssh config entry
 ssh_port = 2223 # defaults to 22
-temp_dir = "~/dev" # Default is "~/remote-builds"
+#temp_dir = "~/dev" # Default is "~/remote-builds"
 env = "~/.profile" # Default is "/etc/profile"
 
 [[remote]]
 name = "cobalt" # Not needed for a single remote
 host = "cobalt" # Could also be a ssh config entry
 ssh_port = 2224 # defaults to 22
-temp_dir = "~/dev" # Default is "~/remote-builds"
+#temp_dir = "~/dev" # Default is "~/remote-builds"
 env = "~/.profile" # Default is "/etc/profile"
 
 [[remote]]
 name = "precision" # Not needed for a single remote
 host = "ritoban@precision" # Could also be a ssh config entry
 ssh_port = 22 # defaults to 22
-temp_dir = "~/dev" # Default is "~/remote-builds"
+#temp_dir = "~/dev" # Default is "~/remote-builds"
 env = "~/.profile" # Default is "/etc/profile"
