@@ -2,10 +2,12 @@
 
 bluetoothctl connect 1E:EB:9E:27:D7:A6
 
-while [ $(pacmd list-sinks | grep "AMZsmt pro" | wc -l) != 2 ]
+while [ $(pactl list sinks | grep "AMZsmt pro" | wc -l) != 2 ]
 do 
     sleep 0.1
 done
 
-pacmd set-default-sink bluez_sink.1E_EB_9E_27_D7_A6.a2dp_sink
+pactl set-default-sink bluez_output.1E_EB_9E_27_D7_A6.a2dp-sink
+
+sleep 3
 keymaps

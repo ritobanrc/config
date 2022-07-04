@@ -16,10 +16,10 @@ case "$name" in
 *.pdf )
     nohup zathura "$filename" & ;;
 *.djvu )
-    nohup evince "$filename" & ;;
+    nohup zathura "$filename" & ;;
 *.epub )
     #2>/dev/null 1>&2 nohup ebook-viewer "$filename" & 
-    nohup foliate "$filename" & ;;
+    nohup zathura "$filename" & ;;
 esac
 
 sleep 3

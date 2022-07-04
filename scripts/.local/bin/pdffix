@@ -1,0 +1,3 @@
+#!/usr/bin/bash
+cpdf -scale-to-fit usletterportrait "$1" -o "penis.pdf"
+mv "penis.pdf" "$1"

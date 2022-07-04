@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Deemix GUI
+Comment=Download music
+Exec=/home/ritoban/Downloads/opt/deemix-gui.AppImage
+Icon=deemix-gui
+Terminal=false
+Type=Application
+Categories=Multimedia;
+
+Path=
+StartupNotify=false

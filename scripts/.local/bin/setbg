@@ -24,7 +24,7 @@ for m in $(xrandr --query | grep " connected" | cut -d" " -f1); do
         wallpaper_file=$(fd . "$wallpaper_dir" -e "jpg" -e "jpeg" -e "png"  --type f | shuf -n 1)
     fi
 
-    notify-send -i $wallpaper_file "Random wallpaper applied to monitor $m"
+    notify-send -i $wallpaper_file "$(basename $wallpaper_file) applied to monitor $m"
 
     echo "Setting $m to wallpaper $wallpaper_file"
 

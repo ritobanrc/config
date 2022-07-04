@@ -23,17 +23,19 @@ Plug 'hrsh7th/nvim-compe'
 Plug 'windwp/nvim-autopairs'
 
 Plug 'preservim/nerdtree'
-"Plug 'ms-jpq/chadtree', {'branch': 'chad', 'do': 'python3 -m chadtree deps'}
-"https://github.com/aonemd/kuroi.vim
-"https://github.com/pineapplegiant/spaceduck#colors-palette-%F0%9F%8E%A8
+Plug 'aonemd/kuroi.vim'
 
 "TODO: Figure this out
 "Plug 'puremourning/vimspector', {'do': './install_gadget.py --all --disable-tcl'}
 
-"Plug 'ritobanrc/night-owl.vim'
-"Plug 'morhetz/gruvbox'
+Plug 'haishanh/night-owl.vim'
+Plug 'morhetz/gruvbox'
+Plug  'arcticicestudio/nord-vim', { 'branch': 'main' }
 Plug 'chriskempson/base16-vim'
 Plug 'octol/vim-cpp-enhanced-highlight' " For better cpp highlights
+Plug 'sainnhe/everforest'
+
+Plug 'plasticboy/vim-markdown'
 
 Plug 'romainl/vim-cool'
 
@@ -81,6 +83,8 @@ set expandtab          " Tab key inserts spaces not tabs
 set softtabstop=4      " spaces to enter for each tab
 set shiftwidth=4       " amount of spaces for indentation
 set shortmess+=aAcIws  " Hide or shorten certain messages
+set nobackup writebackup
+set directory=/tmp/
 
 let g:auto_save_silent = 1  " do not display the auto-save notification
 let g:auto_save = 0
@@ -141,8 +145,10 @@ endfunction
 let base16colorspace=256  " Access colors present in 256 colorspace
 "colorscheme base16-oceanicnext
 "colorscheme base16-atelier-estuary
-"colorscheme base16-seti
-colorscheme base16-solarflare
+"colorscheme base16-seti -- this one is nice
+"colorscheme base16-solarflare
+"colorscheme kuroi
+colorscheme night-owl
 
 
 if $TERM !=? 'linux'
@@ -175,6 +181,33 @@ let g:grammarous#disabled_rules = {
             \ '*' : ['DASH_RULE'],
             \ 'help' : [],
             \ }
+
+" Shamelessly stolen from https://stsievert.com/blog/2016/01/06/vim-jekyll-mathjax/
+function! MathAndLiquid()
+    "" Define certain regions
+    " Block math. Look for "$$[anything]$$"
+    syn region math start=/\$\$/ end=/\$\$/
+    " inline math. Look for "$[not $][anything]$"
+    syn match math_block '\$[^$].\{-}\$'
+
+    " Liquid single line. Look for "{%[anything]%}"
+    syn match liquid '{%.*%}'
+    " Liquid multiline. Look for "{%[anything]%}[anything]{%[anything]%}"
+    syn region highlight_block start='{% highlight .*%}' end='{%.*%}'
+    " Fenced code blocks, used in GitHub Flavored Markdown (GFM)
+    syn region highlight_block start='```' end='```'
+
+    "" Actually highlight those regions.
+    hi link math Statement
+    hi link liquid Statement
+    hi link highlight_block Function
+    hi link math_block Function
+endfunction
+
+" Call everytime we open a Markdown file
+autocmd BufRead,BufNewFile,BufEnter *.md,*.markdown call MathAndLiquid()
+
+let g:vim_markdown_folding_disabled = 1
 
 " ------ commands ------
 
@@ -286,7 +319,7 @@ nnoremap <leader>g :Goyo<CR>
 " TODO: Fix lightline to make it work without COC
 " Lightline
 let g:lightline = {
-      \ 'colorscheme': 'base16',
+      \ 'colorscheme': 'ayu_mirage',
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ],
       \             [ 'cocstatus', 'readonly', 'filename', 'modified' ] ]
@@ -314,6 +347,7 @@ noremap <C-t> :TagbarToggle<CR>
 nmap <Leader>f :GFiles<CR>
 nmap <Leader>F :Files<CR>
 nmap <Leader>b :Buffers<CR>
+nmap <Leader>C :Colors<CR>
 "nmap <Leader>h :History<CR>
 "nmap <Leader>t :BTags<CR>
 "nmap <Leader>T :Tags<CR>
@@ -350,9 +384,9 @@ EOF
 
 "----------------------------------  Completion ---------------------------------
 set completeopt-=menu
-set completeopt+=menuone   " show the popup menu even when there is only 1 match
 set completeopt-=longest   " don't insert the longest common text
-set completeopt-=noselect  " select first match
+set completeopt+=menuone   " show the popup menu even when there is only 1 match
+set completeopt+=noselect  " select first match
 set complete+=kspell "" Complete based on spell checkig
 set updatetime=300   " Smaller updatetime for CursorHold & CursorHoldI
 set shortmess+=c   " don't give |ins-completion-menu| messages.
@@ -523,9 +557,13 @@ augroup AutoRun
     autocmd FileType tex,latex  nnoremap<leader>w :wa <bar> vsplit <bar> term pdflatex % <CR>
     autocmd FileType java nnoremap <leader>w :wa <bar> vsplit <bar> term javac % && java $(basename % .java)<CR>
     autocmd FileType sh nnoremap <leader>w :wa <bar> vsplit <bar> term %:p <CR>
-    autocmd FileType cpp nnoremap <leader>w :wa <bar> make<CR>
+    "autocmd FileType cpp nnoremap <leader>w :wa <bar> make<CR>
     autocmd FileType dot nnoremap <leader>w :wa <bar> vsplit <bar> term dot -Tpng -o$(basename % dot)png % <CR><CR>
 augroup END
+
+
+let &makeprg = 'zsh -c "nice scons --warn=no-duplicate-environment --warn=no-deprecated -Q --implicit-cache -u -j 16"'
+
 """""""""""""" A bunch of mappings '"""""""""""""""""
 " Reload changes if file changed outside of vim requires autoread
 augroup load_changed_file
