@@ -2,7 +2,7 @@
 
 bluetoothctl connect 1E:EB:9E:27:D7:A6
 
-while [ $(pactl list sinks | grep "AMZsmt pro" | wc -l) != 2 ]
+while [ $(pactl list sinks | grep "AMZsmt pro" | wc -l) == 0 ]
 do 
     sleep 0.1
 done

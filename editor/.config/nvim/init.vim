@@ -35,7 +35,7 @@ Plug 'chriskempson/base16-vim'
 Plug 'octol/vim-cpp-enhanced-highlight' " For better cpp highlights
 Plug 'sainnhe/everforest'
 
-Plug 'plasticboy/vim-markdown'
+Plug 'preservim/vim-markdown'
 
 Plug 'romainl/vim-cool'
 
@@ -208,6 +208,7 @@ endfunction
 autocmd BufRead,BufNewFile,BufEnter *.md,*.markdown call MathAndLiquid()
 
 let g:vim_markdown_folding_disabled = 1
+let g:vim_markdown_new_list_item_indent = 0
 
 " ------ commands ------
 
