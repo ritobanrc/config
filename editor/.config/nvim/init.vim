@@ -1,5 +1,22 @@
 scriptencoding utf8
 
+
+" From https://github.com/threkk/dotfiles/blob/master/dotfiles/config/nvim/init.vim
+function! Cond(cond, ...)
+  let opts = get(a:000, 0, {})
+  return a:cond ? opts : extend(opts, { 'on': [], 'for': [] })
+endfunction
+
+let is_vim = !has('nvim')
+let is_nvim = has('nvim')
+let has_terminal = has('nvim') || has('terminal')
+
+if is_nvim
+    let $BASE = '$HOME/.local/share/nvim'
+else
+    let $BASE = '$HOME/.vim'
+endif
+
 " Arch defaults
 runtime! archlinux.vim
 
@@ -10,7 +27,7 @@ if empty(glob(data_dir . '/autoload/plug.vim'))
   autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 
-call plug#begin('~/.local/share/nvim/plugged')
+call plug#begin($BASE.'/plugged')
 
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/goyo.vim'
@@ -18,9 +35,9 @@ Plug 'junegunn/goyo.vim'
 Plug 'itchyny/lightline.vim'
 Plug 'daviesjamie/vim-base16-lightline'
 
-Plug 'neovim/nvim-lspconfig'
-Plug 'hrsh7th/nvim-compe'
-Plug 'windwp/nvim-autopairs'
+Plug 'neovim/nvim-lspconfig', Cond(is_nvim)
+Plug 'hrsh7th/nvim-compe', Cond(is_nvim)
+Plug 'windwp/nvim-autopairs', Cond(is_nvim)
 
 Plug 'preservim/nerdtree'
 Plug 'aonemd/kuroi.vim'
@@ -47,7 +64,7 @@ Plug 'scrooloose/nerdcommenter' " Vim plugin for intensely orgasmic commenting
 
 Plug 'rhysd/vim-grammarous'
 
-Plug 'cespare/vim-toml'
+Plug 'cespare/vim-toml', { 'branch': 'main' }
 Plug 'dhruvasagar/vim-table-mode'
 
 Plug '907th/vim-auto-save'
@@ -128,13 +145,26 @@ set list listchars=tab:>>,trail:~
 
 
 """"""""""""""""''' Colorscheme '""""""""""""
+if $TERM !=? 'linux'
+    set termguicolors
+    " true colors in terminals (neovim doesn't need this)
+    if !has('nvim') && !($TERM =~? 'xterm' || &term =~? 'xterm')
+        let $TERM = 'xterm-256color'
+        let &term = 'xterm-256color'
+    endif
+    if has('multi_byte') && $TERM !=? 'linux'
+        set listchars=tab:»»,trail:•
+        set fillchars=vert:┃ showbreak=↪
+    endif
+endif
+
 function! MyHighlights() abort
     " Transparent background - "None" highlight for Non Text and normal
-    highlight NonText ctermbg=none
-    highlight Normal guibg=none ctermbg=none
-    highlight SignColumn guibg=none ctermbg=none
-    highlight LineNr guibg=none ctermbg=none
-    highlight EndOfBuffer guibg=none ctermbg=none
+    highlight NonText ctermbg=NONE
+    highlight Normal guibg=NONE ctermbg=NONE
+    highlight SignColumn guibg=NONE ctermbg=NONE
+    highlight LineNr guibg=NONE ctermbg=NONE
+    highlight EndOfBuffer guibg=NONE ctermbg=NONE
 endfunction
 
 augroup MyColors
@@ -150,26 +180,13 @@ let base16colorspace=256  " Access colors present in 256 colorspace
 "colorscheme kuroi
 "colorscheme night-owl
 
-"let g:everforest_better_performance = 1
+let g:everforest_better_performance = 1
+set background=dark
 colorscheme everforest
 
 " TODO: do something like this so bold and italics are colored
 " highlight htmlBold gui=bold guifg=#af0000 ctermfg=124
 " highlight htmlItalic gui=italic guifg=#ff8700 ctermfg=214
-"colorscheme gruvbox
-
-if $TERM !=? 'linux'
-    set termguicolors
-    " true colors in terminals (neovim doesn't need this)
-    if !has('nvim') && !($TERM =~? 'xterm' || &term =~? 'xterm')
-        let $TERM = 'xterm-256color'
-        let &term = 'xterm-256color'
-    endif
-    if has('multi_byte') && $TERM !=? 'linux'
-        set listchars=tab:»»,trail:•
-        set fillchars=vert:┃ showbreak=↪
-    endif
-endif
 
 " change cursor shape for different editing modes, neovim does this by default
 if !has('nvim')
@@ -374,9 +391,11 @@ set undofile
 
 
 " Pairs
+if is_nvim
 lua << EOF
 require('nvim-autopairs').setup()
 EOF
+endif
 
 "----------------------------------  Completion ---------------------------------
 set completeopt-=menu
@@ -389,6 +408,7 @@ set shortmess+=c   " don't give |ins-completion-menu| messages.
 set signcolumn=yes  " always show signcolumns
 
 " LSP config (the mappings used in the default file don't quite work right)
+if is_nvim
 nnoremap <silent> gd <cmd>lua vim.lsp.buf.definition()<CR>
 nnoremap <silent> gD <cmd>lua vim.lsp.buf.declaration()<CR>
 nnoremap <silent> gr <cmd>lua vim.lsp.buf.references()<CR>
@@ -470,6 +490,7 @@ vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
 )
 EOF
 
+endif
 
 """"""""" Tables
 
@@ -583,11 +604,6 @@ if $DISPLAY !=? '' && &t_Co == 256
         autocmd WinLeave * setlocal nocursorline
     augroup END
 endif
-
-augroup custom_term
-    autocmd!
-    autocmd TermOpen * setlocal bufhidden=hide
-augroup END
 
 " Use // to search for visually selected text
 vnoremap // y/\V<C-R>=escape(@",'/\')<CR><CR>
