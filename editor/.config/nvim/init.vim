@@ -130,17 +130,17 @@ set list listchars=tab:>>,trail:~
 """"""""""""""""''' Colorscheme '""""""""""""
 function! MyHighlights() abort
     " Transparent background - "None" highlight for Non Text and normal
-    highlight NonText ctermbg=none 
+    highlight NonText ctermbg=none
     highlight Normal guibg=none ctermbg=none
     highlight SignColumn guibg=none ctermbg=none
     highlight LineNr guibg=none ctermbg=none
     highlight EndOfBuffer guibg=none ctermbg=none
 endfunction
 
-"augroup MyColors
-    "autocmd!
-    "autocmd ColorScheme * call MyHighlights()
-"augroup END
+augroup MyColors
+    autocmd!
+    autocmd ColorScheme * call MyHighlights()
+augroup END
 
 let base16colorspace=256  " Access colors present in 256 colorspace
 "colorscheme base16-oceanicnext
@@ -148,8 +148,15 @@ let base16colorspace=256  " Access colors present in 256 colorspace
 "colorscheme base16-seti -- this one is nice
 "colorscheme base16-solarflare
 "colorscheme kuroi
-colorscheme night-owl
+"colorscheme night-owl
 
+"let g:everforest_better_performance = 1
+colorscheme everforest
+
+" TODO: do something like this so bold and italics are colored
+" highlight htmlBold gui=bold guifg=#af0000 ctermfg=124
+" highlight htmlItalic gui=italic guifg=#ff8700 ctermfg=214
+"colorscheme gruvbox
 
 if $TERM !=? 'linux'
     set termguicolors
@@ -212,27 +219,20 @@ let g:vim_markdown_new_list_item_indent = 0
 
 " ------ commands ------
 
-command! D Explore
 
 nnoremap <Leader>e <cmd>NERDTree<CR>
 
-command! R call <SID>ranger()
-command! Q call <SID>quitbuffer()
-command! -nargs=1 B :call <SID>bufferselect("<args>")
 command! W execute 'silent w !sudo tee % >/dev/null' | edit!
 
 " ------ basic maps ------
 "
 " Unbind some useless/annoying default key bindings.
 " Q in normal mode enters Ex mode. You almost never want this.
-nmap Q <Nop>    
+nmap Q <Nop>
 "
 " deleting one character shouldn't be put into clipboard
 nnoremap x "_x
 vnoremap x "_x
-
-" open ranger as a file chooser using the function below
-"nnoremap <leader>r :call <SID>ranger()<CR>
 
 " change windows with ctrl+(hjkl)
 nnoremap <C-J> <C-W><C-J>
@@ -253,7 +253,7 @@ cnoremap %s/ %sm/
 set diffopt+=algorithm:patience
 set diffopt+=indent-heuristic
 
-nnoremap <Tab> ==1j
+nnoremap <Tab> >>j
 
 " re-visual text after changing indent
 vnoremap > >gv
@@ -268,17 +268,13 @@ noremap <silent> j gj
 noremap <silent> 0 g0
 noremap <silent> $ g$
 
-" open a terminal in $PWD
-nnoremap <silent> <Leader>st :split \| :terminal<CR>
-nnoremap <silent> <Leader>vt :vsplit \| :terminal<CR>
-
 
 "" tab control
 "nnoremap <silent> <M-j> :tabmove -1<CR>
 "nnoremap <silent> <M-k> :tabmove +1<CR>
 "nnoremap <silent> <Leader>te :tabnew<CR>
-"nnoremap <silent> <Leader>tn :tabnext<CR>
-"nnoremap <silent> <Leader>tf :tabfirst<CR>
+nnoremap <silent> <Tab> :tabnext<CR>
+nnoremap <silent> <S-Tab> :tabfirst<CR>
 "nnoremap <silent> <Leader>tp :tabprevious<CR>
 
 " close current buffer and/or tab
@@ -300,7 +296,6 @@ endfunction
 
 
 function! NewVSplit()
-    "let current = &filetype
     let l:current = &filetype
     vnew
     let &filetype = current
@@ -317,10 +312,10 @@ nnoremap <leader>md :set filetype=markdown<CR>
 " Goyo
 nnoremap <leader>g :Goyo<CR>
 
-" TODO: Fix lightline to make it work without COC
 " Lightline
+" Prevoius colorschmes: ayu_mirage everforest
 let g:lightline = {
-      \ 'colorscheme': 'ayu_mirage',
+      \ 'colorscheme': 'ayu_mirage', 
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ],
       \             [ 'cocstatus', 'readonly', 'filename', 'modified' ] ]
@@ -338,7 +333,7 @@ endfunction
 autocmd User CocStatusChange,CocDiagnosticChange call lightline#update()
 
 """"""""""""" Scrolling """"""""""""""
-set scrolloff=8  " Start scrolling 8 lines from the edges. 
+set scrolloff=8  " Start scrolling 8 lines from the edges.
 set sidescrolloff=10 " Same as previous, except horizontally
 
 " Tagbar
@@ -435,7 +430,7 @@ inoremap <silent><expr> <C-Space> compe#complete()
 inoremap <silent><expr> <CR>      compe#confirm('<CR>')
 inoremap <silent><expr> <C-e>     compe#close('<C-e>')
 " Figure out what these mappings are supposed to do
-inoremap <silent><expr> <C-f>     compe#scroll({ 'delta': +4 })  
+inoremap <silent><expr> <C-f>     compe#scroll({ 'delta': +4 })
 inoremap <silent><expr> <C-d>     compe#scroll({ 'delta': -4 })
 
 lua << EOF
@@ -511,7 +506,7 @@ nnoremap <leader>ss :set spell spelllang=es keymap=accents<CR>
 
 " Arrows
 inoremap <C-l> →<space>
-inoremap <C-h> <space>←<space>
+inoremap <C-h> ←<space>
 inoremap <C-j> ↓<space>
 inoremap <C-k> ↑<space>
 
@@ -547,7 +542,6 @@ let g:tagbar_type_markdown = {
     \ 'sort': 0,
 \ }
 
- "let g:markdown_folding = 1
 
 " ------ autocmd ------
 augroup AutoRun
@@ -603,11 +597,9 @@ let g:UltiSnipsExpandTrigger="<C-j>"
 let g:UltiSnipsJumpForwardTrigger="<c-n>"
 let g:UltiSnipsJumpBackwardTrigger="<c-p>"
 
-" Switch between header and source files C++ 
+" Switch between header and source files C++
 " https://vim.fandom.com/wiki/Easily_switch_between_source_and_header_file#Single_line_solution
 nnoremap <leader>h :vsplit %:p:s,.h$,.X123X,:s,.cpp$,.h,:s,.X123X$,.cpp,<CR>
-
-" ------ adv maps ------
 
 
 " strip trailing whitespace, ss (strip space)
