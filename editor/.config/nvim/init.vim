@@ -237,7 +237,7 @@ let g:vim_markdown_new_list_item_indent = 0
 " ------ commands ------
 
 
-nnoremap <Leader>e <cmd>NERDTree<CR>
+nnoremap <Leader>e :NERDTree<CR>
 
 command! W execute 'silent w !sudo tee % >/dev/null' | edit!
 
