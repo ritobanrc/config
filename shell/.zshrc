@@ -96,7 +96,7 @@ bindkey -M menuselect 'j' vi-down-line-or-history
 
 echo -ne '\e[5 q' # Use beam shape cursor on startup.
 
-export RUSTC_WRAPPER=sccache
+#export RUSTC_WRAPPER=sccache
 
 export MANPAGER='nvim +Man!'
 

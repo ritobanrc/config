@@ -76,3 +76,5 @@ alias get='curl --continue-at - --location --progress-bar --remote-name --remote
 alias ex=""
 
 alias ssh="ssh -Y"
+
+alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'

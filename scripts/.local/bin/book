@@ -9,14 +9,14 @@ done | fzf)
 
 echo $name
 
-filename=$(fd "$name")
+filename="$(fd "$name")"
 echo "Opening " $filename
 
 case "$name" in 
 *.pdf )
     nohup zathura "$filename" & ;;
 *.djvu )
-    nohup zathura "$filename" & ;;
+    nohup evince "$filename" & ;;
 *.epub )
     #2>/dev/null 1>&2 nohup ebook-viewer "$filename" & 
     nohup zathura "$filename" & ;;

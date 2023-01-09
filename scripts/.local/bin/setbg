@@ -24,10 +24,17 @@ for m in $(xrandr --query | grep " connected" | cut -d" " -f1); do
         wallpaper_file=$(fd . "$wallpaper_dir" -e "jpg" -e "jpeg" -e "png"  --type f | shuf -n 1)
     fi
 
-    notify-send -i $wallpaper_file "$(basename $wallpaper_file) applied to monitor $m"
+    /usr/bin/notify-send -i $wallpaper_file "$wallpaper_file  applied to monitor $m"
 
-    echo "Setting $m to wallpaper $wallpaper_file"
+    #echo "Setting $m to wallpaper $wallpaper_file ($(date))"
+
+    if [ "$(pgrep wayland | wc -l)" -ge 1 ]; then
+        gsettings set org.gnome.desktop.background picture-uri-dark "$wallpaper_file"
+    else
+        xwallpaper --output "$m" --zoom "$wallpaper_file"
+    fi
 
     #xfconf-query -c xfce4-desktop  -p /backdrop/screen0/monitor$m/workspace0/last-image -s "$wallpaper_file"
-    xwallpaper --output "$m" --zoom "$wallpaper_file" 
+    
+    #
 done

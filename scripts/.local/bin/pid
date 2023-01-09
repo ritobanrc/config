@@ -1,0 +1,5 @@
+#!/bin/bash
+
+FILE=$HOME/dox/college/pid 
+cat $FILE
+cat $FILE | xclip -sel clipboard

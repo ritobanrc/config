@@ -2,7 +2,7 @@
 
 cd $HOME/config
 
-name=$(fd -H -E .git | fzf -q "$1")
+name=$(fd -H -E .git -t f | fzf -q "$1")
 
 echo $name
 

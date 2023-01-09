@@ -78,8 +78,7 @@ Plug 'lervag/vimtex'
 
 "Plug 'SirVer/ultisnips'
 "Plug 'honza/vim-snippets'
-
-
+Plug 'github/copilot.vim', { 'branch': 'main' }
 
 call plug#end()
 
@@ -105,14 +104,15 @@ set directory=/tmp/
 
 let g:auto_save_silent = 1  " do not display the auto-save notification
 let g:auto_save = 0
-augroup ft_markdown
+augroup autosave
   au!
-  au FileType markdown let b:auto_save = 1
-  au FileType python let b:auto_save = 1
+  autocmd FileType markdown let b:auto_save = 1
+  autocmd FileType python let b:auto_save = 1
 augroup END
 
 "autocmd FileType rust set foldmethod=indent  " Fold based on indents
 autocmd FileType rust let g:rustfmt_autosave = 1
+autocmd FileType tex set noautoindent
 
 
 set splitright splitbelow
@@ -129,6 +129,7 @@ let g:mapleader = "\<Space>"
 
 " enable mouse
 set mouse=a
+set mousemodel=extend
 if has('mouse_sgr')
     " sgr mouse is better but not every term supports it
     set ttymouse=sgr
@@ -167,6 +168,25 @@ function! MyHighlights() abort
     highlight EndOfBuffer guibg=NONE ctermbg=NONE
 endfunction
 
+function! s:everforest_custom() abort
+  let l:palette = everforest#get_palette('medium', {})
+  " Define a highlight group.
+  " The first parameter is the name of a highlight group,
+  " the second parameter is the foreground color,
+  " the third parameter is the background color,
+  " the fourth parameter is for UI highlighting which is optional,
+  " and the last parameter is for `guisp` which is also optional.
+  " See `autoload/everforest.vim` for the format of `l:palette`.
+  call everforest#highlight('htmlBold', l:palette.blue, l:palette.none, 'bold')
+  call everforest#highlight('htmlItalic', l:palette.green, l:palette.none, 'italic')
+endfunction
+
+augroup EverforestCustom
+  autocmd!
+  autocmd ColorScheme everforest call s:everforest_custom()
+augroup END
+
+
 augroup MyColors
     autocmd!
     autocmd ColorScheme * call MyHighlights()
@@ -180,13 +200,10 @@ let base16colorspace=256  " Access colors present in 256 colorspace
 "colorscheme kuroi
 "colorscheme night-owl
 
-let g:everforest_better_performance = 1
+"let g:everforest_better_performance = 1
 set background=dark
 colorscheme everforest
 
-" TODO: do something like this so bold and italics are colored
-" highlight htmlBold gui=bold guifg=#af0000 ctermfg=124
-" highlight htmlItalic gui=italic guifg=#ff8700 ctermfg=214
 
 " change cursor shape for different editing modes, neovim does this by default
 if !has('nvim')
@@ -239,8 +256,6 @@ let g:vim_markdown_new_list_item_indent = 0
 
 nnoremap <Leader>e :NERDTree<CR>
 
-command! W execute 'silent w !sudo tee % >/dev/null' | edit!
-
 " ------ basic maps ------
 "
 " Unbind some useless/annoying default key bindings.
@@ -259,7 +274,7 @@ nnoremap <C-H> <C-W><C-H>
 
 " alt defaults
 nnoremap 0 ^
-nnoremap Y y$
+"nnoremap Y y$
 
 " Magic searching
 nnoremap ? ?\v
@@ -385,19 +400,22 @@ nmap <Leader>a :Rg<CR>
 "\   },
 "\ })
 "
+
+" Disable writing partial files
+" :w in visual mode normally writes a partial file, which deletes everything
+" except the selected area
+" If we're in visual mode and type in :w, then just turn it into a normal :w
+" -- its not worth the risk
+cabbrev <expr> w getcmdtype()==':' && getcmdline() == "'<,'>w" ? '<c-u>w' : 'w'
+cabbrev <expr> wq getcmdtype()==':' && getcmdline() == "'<,'>wq" ? '<c-u>wq' : 'wq'
+
 " Undo
 set undodir=~/.vimundo
 set undofile
 
 
-" Pairs
-if is_nvim
-lua << EOF
-require('nvim-autopairs').setup()
-EOF
-endif
-
 "----------------------------------  Completion ---------------------------------
+
 set completeopt-=menu
 set completeopt-=longest   " don't insert the longest common text
 set completeopt+=menuone   " show the popup menu even when there is only 1 match
@@ -452,45 +470,6 @@ inoremap <silent><expr> <C-e>     compe#close('<C-e>')
 " Figure out what these mappings are supposed to do
 inoremap <silent><expr> <C-f>     compe#scroll({ 'delta': +4 })
 inoremap <silent><expr> <C-d>     compe#scroll({ 'delta': -4 })
-
-lua << EOF
-local nvim_lsp = require'lspconfig'
-local on_attach = function(client, bufnr)
-    require'lsp_signature'.on_attach()
-end
-
-nvim_lsp.pyright.setup{on_attach=on_attach}
-
-nvim_lsp.rust_analyzer.setup({
-    on_attach=on_attach,
-    settings = {
-        ["rust-analyzer"] = {
-            assist = {
-                importGranularity = "module",
-                importPrefix = "by_self",
-            },
-            cargo = {
-                loadOutDirsFromCheck = true
-            },
-            procMacro = {
-                enable = true
-            },
-        }
-    }
-})
-
-nvim_lsp.ccls.setup{ on_attach=on_attach }
-
-vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
-  vim.lsp.diagnostic.on_publish_diagnostics, {
-    virtual_text = true,
-    signs = true,
-    update_in_insert = true,
-  }
-)
-EOF
-
-endif
 
 """"""""" Tables
 
@@ -578,7 +557,6 @@ augroup AutoRun
 augroup END
 
 
-let &makeprg = 'zsh -c "nice scons --warn=no-duplicate-environment --warn=no-deprecated -Q --implicit-cache -u -j 16"'
 
 """""""""""""" A bunch of mappings '"""""""""""""""""
 " Reload changes if file changed outside of vim requires autoread
@@ -674,3 +652,51 @@ nnoremap <silent> <Leader>ll
     \   let w:longlines = matchadd('ColorColumn', '\%80v', 81) <Bar>
     \   echo 'Long line highlighting enabled'
     \ <Bar> endif <CR>
+
+
+" Pairs
+if is_nvim
+lua << EOF
+require('nvim-autopairs').setup()
+EOF
+endif
+
+lua << EOF
+local nvim_lsp = require'lspconfig'
+local on_attach = function(client, bufnr)
+    require'lsp_signature'.on_attach()
+end
+
+nvim_lsp.pyright.setup{on_attach=on_attach}
+
+nvim_lsp.rust_analyzer.setup({
+    on_attach=on_attach,
+    settings = {
+        ["rust-analyzer"] = {
+            assist = {
+                importGranularity = "module",
+                importPrefix = "by_self",
+            },
+            cargo = {
+                loadOutDirsFromCheck = true
+            },
+            procMacro = {
+                enable = true
+            },
+        }
+    }
+})
+
+-- nvim_lsp.ccls.setup{ on_attach=on_attach }
+
+vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
+  vim.lsp.diagnostic.on_publish_diagnostics, {
+    virtual_text = true,
+    signs = true,
+    update_in_insert = true,
+  }
+)
+EOF
+
+endif
+
