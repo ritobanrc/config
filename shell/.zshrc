@@ -1,5 +1,5 @@
 # If you come from bash you might have to change your $PATH.
-# export PATH=$HOME/bin:/usr/local/bin:$PATH
+export PATH=$HOME/.local/bin:/usr/local/bin:$PATH
 #
 #eval "$(starship init zsh)"
 eval "$(zoxide init zsh)"
@@ -84,8 +84,8 @@ source ~/.zsh/settings/aliases.zsh
 source ~/.zsh/settings/bindings.zsh
 source ~/.zsh/settings/completion.zsh
 
-source  /usr/share/fzf/completion.zsh
-source  /usr/share/fzf/key-bindings.zsh
+# source  /usr/share/fzf/completion.zsh
+source  /usr/share/fzf/shell/key-bindings.zsh
 
 
 # use vim keys in tab complete menu:
@@ -160,3 +160,12 @@ loop () {
 
 # Print a newline before the prompt
 precmd() { print "" }
+
+# >>> juliaup initialize >>>
+
+# !! Contents within this block are managed by juliaup !!
+
+path=('/home/ritoban/.juliaup/bin' $path)
+export PATH
+
+# <<< juliaup initialize <<<
