@@ -46,12 +46,6 @@ alias prm='sudo pacman -Rnsc' # really remove, configs and all
 
 alias please='sudo'
 
-alias pkg='makepkg --printsrcinfo > .SRCINFO && makepkg -fsrc'
-alias spkg='makepkg --printsrcinfo > .SRCINFO && makepkg -fsrc --sign'
-alias mk='make && make clean'
-alias smk='sudo make clean install && make clean'
-alias ssmk='sudo make clean install && make clean && rm -iv config.h'
-
 alias cfv='nvim ~/.config/nvim/init.vim'
 alias cfa='nvim ~/.config/alacritty/alacritty.yml'
 alias cfz='nvim ~/.zshrc'

@@ -1,0 +1,4 @@
+#!/usr/bin/bash
+[[ $(cat /sys/class/power_supply/AC/online) -eq 0 ]] && \
+    (for i in $(seq 2 7); do echo 1 > /sys/devices/system/cpu/cpu$i/online; done) || \
+    (for i in $(seq 1 7); do echo 1 > /sys/devices/system/cpu/cpu$i/online; done)

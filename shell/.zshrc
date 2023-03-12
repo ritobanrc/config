@@ -105,7 +105,7 @@ export CARGO_TARGET_DIR="/home/ritoban/.cargo/target"
 export PHYSBAM=$HOME/dev/PhysBAM
 export PATH=$PATH:$PHYSBAM/Scripts/misc:$PHYSBAM/Projects/opengl_3d:$PHYSBAM/Projects/opengl_2d
 
-alias o='$PHYSBAM/Projects/opengl_3d/opengl_3d$SUFFIX'
+alias o='xdg-open'
 alias o2='$PHYSBAM/Projects/opengl_2d/opengl_2d$SUFFIX'
 alias o3='$PHYSBAM/Projects/opengl_3d/opengl_3d$SUFFIX'
 alias -g cs='nice scons --warn=no-duplicate-environment --warn=no-deprecated -Q --implicit-cache -u -j 16'

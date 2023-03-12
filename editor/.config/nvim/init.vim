@@ -76,9 +76,9 @@ Plug 'ray-x/lsp_signature.nvim'
 
 Plug 'lervag/vimtex'
 
-"Plug 'SirVer/ultisnips'
+"beginPlug 'SirVer/ultisnips'
 "Plug 'honza/vim-snippets'
-Plug 'github/copilot.vim', { 'branch': 'main' }
+"Plug 'github/copilot.vim', { 'branch': 'main' }
 
 call plug#end()
 
@@ -97,10 +97,12 @@ set confirm            " ask confirmation like save before quit.
 set wildmenu           " Tab completion menu when using command mode
 set expandtab          " Tab key inserts spaces not tabs
 set softtabstop=4      " spaces to enter for each tab
+set tabstop=4
 set shiftwidth=4       " amount of spaces for indentation
 set shortmess+=aAcIws  " Hide or shorten certain messages
 set nobackup writebackup
 set directory=/tmp/
+
 
 let g:auto_save_silent = 1  " do not display the auto-save notification
 let g:auto_save = 0
@@ -113,7 +115,6 @@ augroup END
 "autocmd FileType rust set foldmethod=indent  " Fold based on indents
 autocmd FileType rust let g:rustfmt_autosave = 1
 autocmd FileType tex set noautoindent
-
 
 set splitright splitbelow
 
@@ -547,9 +548,8 @@ let g:tagbar_type_markdown = {
 augroup AutoRun
     autocmd FileType python nnoremap <leader>w :wa <bar> vsplit <bar> term python %<CR>
     autocmd FileType rust nnoremap <leader>w :wa <bar> vsplit <bar> term cargo run<CR>
-    autocmd FileType markdown  nnoremap<leader>w :wa <bar> split <bar> term panrun %<CR>
     autocmd Filetype markdown setlocal spell wrap linebreak nolist
-    autocmd FileType tex,latex  nnoremap<leader>w :wa <bar> vsplit <bar> term pdflatex % <CR>
+    autocmd FileType tex,latex  setlocal spell wrap linebreak nolist
     autocmd FileType java nnoremap <leader>w :wa <bar> vsplit <bar> term javac % && java $(basename % .java)<CR>
     autocmd FileType sh nnoremap <leader>w :wa <bar> vsplit <bar> term %:p <CR>
     "autocmd FileType cpp nnoremap <leader>w :wa <bar> make<CR>

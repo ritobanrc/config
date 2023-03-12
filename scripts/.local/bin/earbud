@@ -1,13 +1,13 @@
 #!/bin/bash
 
-bluetoothctl connect 1E:EB:9E:27:D7:A6
+bluetoothctl connect 00:60:DE:00:10:41
 
-while [ $(pactl list sinks | grep "AMZsmt pro" | wc -l) == 0 ]
+while [ $(pactl list sinks | grep "EarFun Air" | wc -l) == 0 ]
 do 
     sleep 0.1
 done
 
-pactl set-default-sink bluez_output.1E_EB_9E_27_D7_A6.a2dp-sink
+pactl set-default-sink bluez_output.00_60_DE_00_10_41.1
 
 sleep 3
 keymaps
