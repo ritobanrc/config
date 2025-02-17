@@ -84,8 +84,10 @@ source ~/.zsh/settings/aliases.zsh
 source ~/.zsh/settings/bindings.zsh
 source ~/.zsh/settings/completion.zsh
 
-# source  /usr/share/fzf/completion.zsh
-source  /usr/share/fzf/shell/key-bindings.zsh
+source <(fzf --zsh)
+
+ #source  /usr/share/fzf/completion.zsh
+#source  /usr/share/fzf/shell/key-bindings.zsh
 
 
 # use vim keys in tab complete menu:
@@ -112,6 +114,7 @@ alias -g cs='nice scons --warn=no-duplicate-environment --warn=no-deprecated -Q 
 alias -g csd='cs TYPE=debug'
 alias pb='cd $PHYSBAM'
 
+export PATH=$PATH:$HOME/.local/share/gem/ruby/3.3.0/bin
 
 #
 #
@@ -121,11 +124,11 @@ alias pb='cd $PHYSBAM'
 # export LANG=en_US.UTF-8
 
 # Preferred editor for local and remote sessions
-# if [[ -n $SSH_CONNECTION ]]; then
-#   export EDITOR='vim'
-# else
-#   export EDITOR='mvim'
-# fi
+ if [[ -n $SSH_CONNECTION ]]; then
+   export EDITOR='vim'
+ else
+   export EDITOR='nvim'
+ fi
 
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
@@ -169,3 +172,28 @@ path=('/home/ritoban/.juliaup/bin' $path)
 export PATH
 
 # <<< juliaup initialize <<<
+#
+# mpi things
+# source /etc/profile.d/modules.sh
+# module load mpi/openmpi-x86_64
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/usr/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/usr/etc/profile.d/conda.sh" ]; then
+        . "/usr/etc/profile.d/conda.sh"
+    else
+        export PATH="/usr/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+
+alias ncspot="flatpak run io.github.hrkfdn.ncspot"
+
+source ~/.elan/env
+
+export QSYS_ROOTDIR="/home/ritoban/intelFPGA_lite/23.1std/quartus/sopc_builder/bin"

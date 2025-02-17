@@ -2,24 +2,24 @@
 
 cd $HOME/Downloads/ebooks/
 
-name=$(fd -e epub -e pdf -e djvu | while read line ; 
+name=`fd -e epub -e pdf -e djvu | while read line ; 
 do
     basename "$line"
-done | fzf)
+done | fzf --reverse`
 
 echo $name
 
-filename="$(fd "$name")"
+filename=`find -name "$name"`
 echo "Opening " $filename
 
 case "$name" in 
 *.pdf )
-    nohup zathura "$filename" & ;;
+    zathura --fork "$filename" & ;;
 *.djvu )
-    nohup evince "$filename" & ;;
+    zathura --fork "$filename" & ;;
 *.epub )
     #2>/dev/null 1>&2 nohup ebook-viewer "$filename" & 
-    nohup zathura "$filename" & ;;
+    zathura --fork "$filename" & ;;
 esac
 
-sleep 3
+sleep 1

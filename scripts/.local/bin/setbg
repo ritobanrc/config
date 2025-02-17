@@ -1,15 +1,13 @@
 #!/bin/bash
 
-#[ -f "$2" ] && cp "$2" ~/.config/wall.png && notify-send -i "$HOME/.config/wall.png" "Wallpaper changed."
+export DISPLAY=":0"
 
-#[ -d "$2" ] && cp "$" ~/.config/wall.png && notify-send -i "$HOME/.config/wall.png" "Random Wallpaper chosen."
-
-export DISPLAY=":0.0"
-
-wallpaper_dir="/home/ritoban/pix/wall"
+source ~/.config/user-dirs.dirs
+wallpaper_dir="$XDG_PICTURES_DIR/wall"
 
 for m in $(xrandr --query | grep " connected" | cut -d" " -f1); do
     wallpaper_file=$(fd . "$wallpaper_dir" -e "jpg" -e "jpeg" -e "png" -E "nsfw" --type f | shuf -n 1)
+
 
     if [ "$1" == "-f" ]; then
         echo "Using file $2"
@@ -24,17 +22,17 @@ for m in $(xrandr --query | grep " connected" | cut -d" " -f1); do
         wallpaper_file=$(fd . "$wallpaper_dir" -e "jpg" -e "jpeg" -e "png"  --type f | shuf -n 1)
     fi
 
-    /usr/bin/notify-send -i $wallpaper_file "$wallpaper_file  applied to monitor $m"
 
-    #echo "Setting $m to wallpaper $wallpaper_file ($(date))"
+    #/usr/bin/notify-send -i $wallpaper_file "$wallpaper_file  applied to monitor $m"
 
-    if [ "$(pgrep wayland | wc -l)" -ge 1 ]; then
+    echo $wallpaper_file
+
+    if [ "$(pgrep gnome | wc -l)" -ge 1 ]; then
         gsettings set org.gnome.desktop.background picture-uri-dark "$wallpaper_file"
     else
         xwallpaper --output "$m" --zoom "$wallpaper_file"
     fi
 
     #xfconf-query -c xfce4-desktop  -p /backdrop/screen0/monitor$m/workspace0/last-image -s "$wallpaper_file"
-    
     #
 done

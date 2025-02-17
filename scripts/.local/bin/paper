@@ -1,8 +1,8 @@
 #!/bin/bash
 
-cd $HOME/dox/capstone/papers
-filename=$(fd -e pdf | fzf)
+cd $HOME/OneDrive/papers
+filename=$(find -name "*.pdf" | fzf)
 
-nohup zathura "$filename" &
+zathura --fork "$filename" &
 
 sleep 1

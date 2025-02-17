@@ -29,6 +29,10 @@ endif
 
 call plug#begin($BASE.'/plugged')
 
+"Plug 'let-def/texpresso.vim'
+"Plug 'kaarmu/typst.vim'
+"Plug 'MrPicklePinosaur/typst-conceal.vim', {'for': 'typst'}   " vim plug
+
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/goyo.vim'
 "Plug 'neoclide/coc.nvim', { 'branch': 'release' }
@@ -36,11 +40,15 @@ Plug 'itchyny/lightline.vim'
 Plug 'daviesjamie/vim-base16-lightline'
 
 Plug 'neovim/nvim-lspconfig', Cond(is_nvim)
-Plug 'hrsh7th/nvim-compe', Cond(is_nvim)
+Plug 'hrsh7th/nvim-cmp', Cond(is_nvim)
+Plug 'hrsh7th/cmp-nvim-lsp', Cond(is_nvim)
+
 Plug 'windwp/nvim-autopairs', Cond(is_nvim)
+
 
 Plug 'preservim/nerdtree'
 Plug 'aonemd/kuroi.vim'
+Plug 'dgox16/oldworld.nvim'
 
 "TODO: Figure this out
 "Plug 'puremourning/vimspector', {'do': './install_gadget.py --all --disable-tcl'}
@@ -73,17 +81,17 @@ Plug 'preservim/tagbar'
 
 " TODO: switch to lsp-saga
 Plug 'ray-x/lsp_signature.nvim'
+Plug 'ActivityWatch/aw-watcher-vim'
 
-Plug 'lervag/vimtex'
+"Plug 'lervag/vimtex'
 
 "beginPlug 'SirVer/ultisnips'
 "Plug 'honza/vim-snippets'
-"Plug 'github/copilot.vim', { 'branch': 'main' }
 
 call plug#end()
 
 " system clipboard (requires +clipboard)
-set clipboard^=unnamed,unnamedplus
+set clipboard+=unnamedplus
 
 " additional settings
 " set modeline         " enable vim modelines
@@ -100,8 +108,28 @@ set softtabstop=4      " spaces to enter for each tab
 set tabstop=4
 set shiftwidth=4       " amount of spaces for indentation
 set shortmess+=aAcIws  " Hide or shorten certain messages
-set nobackup writebackup
-set directory=/tmp/
+set conceallevel=2 
+
+set undofile
+set undolevels=1000         " How many undos
+set undoreload=10000        " number of lines to save for undo
+
+set backup                        " enable backups
+set swapfile                      " enable swaps
+set undodir=$HOME/.vim/tmp/undo     " undo files
+set backupdir=$HOME/.vim/tmp/backup " backups
+set directory=$HOME/.vim/tmp/swap   " swap files
+
+" Make those folders automatically if they don't already exist.
+if !isdirectory(expand(&undodir))
+    call mkdir(expand(&undodir), "p")
+endif
+if !isdirectory(expand(&backupdir))
+    call mkdir(expand(&backupdir), "p")
+endif
+if !isdirectory(expand(&directory))
+    call mkdir(expand(&directory), "p")
+endif
 
 
 let g:auto_save_silent = 1  " do not display the auto-save notification
@@ -159,18 +187,8 @@ if $TERM !=? 'linux'
         set fillchars=vert:┃ showbreak=↪
     endif
 endif
-
-function! MyHighlights() abort
-    " Transparent background - "None" highlight for Non Text and normal
-    highlight NonText ctermbg=NONE
-    highlight Normal guibg=NONE ctermbg=NONE
-    highlight SignColumn guibg=NONE ctermbg=NONE
-    highlight LineNr guibg=NONE ctermbg=NONE
-    highlight EndOfBuffer guibg=NONE ctermbg=NONE
-endfunction
-
 function! s:everforest_custom() abort
-  let l:palette = everforest#get_palette('medium', {})
+  let l:palette = everforest#get_palette('hard', {})
   " Define a highlight group.
   " The first parameter is the name of a highlight group,
   " the second parameter is the foreground color,
@@ -180,6 +198,7 @@ function! s:everforest_custom() abort
   " See `autoload/everforest.vim` for the format of `l:palette`.
   call everforest#highlight('htmlBold', l:palette.blue, l:palette.none, 'bold')
   call everforest#highlight('htmlItalic', l:palette.green, l:palette.none, 'italic')
+
 endfunction
 
 augroup EverforestCustom
@@ -188,10 +207,7 @@ augroup EverforestCustom
 augroup END
 
 
-augroup MyColors
-    autocmd!
-    autocmd ColorScheme * call MyHighlights()
-augroup END
+
 
 let base16colorspace=256  " Access colors present in 256 colorspace
 "colorscheme base16-oceanicnext
@@ -203,7 +219,30 @@ let base16colorspace=256  " Access colors present in 256 colorspace
 
 "let g:everforest_better_performance = 1
 set background=dark
+let everforest_transparent_background = 1
 colorscheme everforest
+
+"function! MyHighlights() abort
+    "" Transparent background - "None" highlight for Non Text and normal
+    "highlight NonText ctermbg=NONE
+    "highlight Normal guibg=NONE ctermbg=NONE
+    "highlight SignColumn guibg=NONE ctermbg=NONE
+    "highlight LineNr guibg=NONE ctermbg=NONE
+    "highlight EndOfBuffer guibg=NONE ctermbg=NONE
+"endfunction
+"augroup MyColors
+    "autocmd!
+    "autocmd ColorScheme * call MyHighlights()
+"augroup END
+"colorscheme oldworld
+
+"function! LightMode()
+    ""let current = &filetype
+    "let everforest_transparent_background = 0
+    "set background=light
+    "colorscheme everforest
+"endfunction
+
 
 
 " change cursor shape for different editing modes, neovim does this by default
@@ -254,6 +293,8 @@ let g:vim_markdown_new_list_item_indent = 0
 
 " ------ commands ------
 
+inoremap <C-o> <Bslash>
+inoremap <C-p> \|
 
 nnoremap <Leader>e :NERDTree<CR>
 
@@ -438,40 +479,6 @@ nnoremap <silent> <leader>rn <cmd>lua vim.lsp.buf.rename()<CR>
 nnoremap <silent> <C-n> <cmd>lua vim.lsp.diagnostic.goto_prev()<CR>
 nnoremap <silent> <C-p> <cmd>lua vim.lsp.diagnostic.goto_next()<CR>
 
-let g:compe = {}
-let g:compe.enabled = v:true
-let g:compe.autocomplete = v:true
-let g:compe.debug = v:false
-let g:compe.min_length = 1
-let g:compe.preselect = 'enable'
-let g:compe.throttle_time = 80
-let g:compe.source_timeout = 200
-let g:compe.resolve_timeout = 800
-let g:compe.incomplete_delay = 400
-let g:compe.max_abbr_width = 100
-let g:compe.max_kind_width = 100
-let g:compe.max_menu_width = 100
-let g:compe.documentation = v:true
-
-let g:compe.source = {}
-let g:compe.source.path = v:true
-let g:compe.source.buffer = v:true
-let g:compe.source.calc = v:true
-let g:compe.source.nvim_lsp = v:true
-let g:compe.source.nvim_lua = v:true
-let g:compe.source.vsnip = v:false
-let g:compe.source.ultisnips = v:false
-let g:compe.source.luasnip = v:false
-let g:compe.source.omni = v:false
-let g:compe.source.emoji = v:true
-
-inoremap <silent><expr> <C-Space> compe#complete()
-inoremap <silent><expr> <CR>      compe#confirm('<CR>')
-inoremap <silent><expr> <C-e>     compe#close('<C-e>')
-" Figure out what these mappings are supposed to do
-inoremap <silent><expr> <C-f>     compe#scroll({ 'delta': +4 })
-inoremap <silent><expr> <C-d>     compe#scroll({ 'delta': -4 })
-
 """"""""" Tables
 
 function! s:isAtStartOfLine(mapping)
@@ -638,65 +645,125 @@ nnoremap <Leader>cw
     \   unlet b:sub <Bar>
     \ endif <CR>
 
-" highlight long lines, ll (long lines)
-let w:longlines = matchadd('ColorColumn', '\%'.&textwidth.'v', &textwidth)
-nnoremap <silent> <Leader>ll
-    \ :if exists('w:longlines') <Bar>
-    \   silent! call matchdelete(w:longlines) <Bar>
-    \   echo 'Long line highlighting disabled'
-    \   <Bar> unlet w:longlines <Bar>
-    \ elseif &textwidth > 0 <Bar>
-    \   let w:longlines = matchadd('ColorColumn', '\%'.&textwidth.'v', &textwidth) <Bar>
-    \   echo 'Long line highlighting enabled'
-    \ <Bar> else <Bar>
-    \   let w:longlines = matchadd('ColorColumn', '\%80v', 81) <Bar>
-    \   echo 'Long line highlighting enabled'
-    \ <Bar> endif <CR>
 
-
-" Pairs
 if is_nvim
 lua << EOF
 require('nvim-autopairs').setup()
-EOF
-endif
 
-lua << EOF
-local nvim_lsp = require'lspconfig'
-local on_attach = function(client, bufnr)
-    require'lsp_signature'.on_attach()
-end
+local cmp = require('cmp')
 
-nvim_lsp.pyright.setup{on_attach=on_attach}
+cmp.setup({
+    snippet = {
+      -- REQUIRED - you must specify a snippet engine
+      expand = function(args)
+        -- vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
+        -- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+        -- require('snippy').expand_snippet(args.body) -- For `snippy` users.
+        -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
+        -- vim.snippet.expand(args.body) -- For native neovim snippets (Neovim v0.10+)
 
-nvim_lsp.rust_analyzer.setup({
-    on_attach=on_attach,
-    settings = {
-        ["rust-analyzer"] = {
-            assist = {
-                importGranularity = "module",
-                importPrefix = "by_self",
-            },
-            cargo = {
-                loadOutDirsFromCheck = true
-            },
-            procMacro = {
-                enable = true
-            },
-        }
-    }
+        -- For `mini.snippets` users:
+        -- local insert = MiniSnippets.config.expand.insert or MiniSnippets.default_insert
+        -- insert({ body = args.body }) -- Insert at cursor
+        -- cmp.resubscribe({ "TextChangedI", "TextChangedP" })
+        -- require("cmp.config").set_onetime({ sources = {} })
+      end,
+    },
+    window = {
+      -- completion = cmp.config.window.bordered(),
+      -- documentation = cmp.config.window.bordered(),
+    },
+    mapping = cmp.mapping.preset.insert({
+      ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+      ['<C-f>'] = cmp.mapping.scroll_docs(4),
+      ['<C-Space>'] = cmp.mapping.complete(),
+      ['<C-e>'] = cmp.mapping.abort(),
+      -- ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+      ['<CR>'] = cmp.mapping.confirm({
+        behavior = cmp.ConfirmBehavior.Replace,
+        select = true,
+      }),
+    }),
+    sources = cmp.config.sources({
+      { name = 'nvim_lsp' },
+      -- { name = 'vsnip' }, -- For vsnip users.
+      -- { name = 'luasnip' }, -- For luasnip users.
+      -- { name = 'ultisnips' }, -- For ultisnips users.
+      -- { name = 'snippy' }, -- For snippy users.
+    }, {
+      { name = 'buffer' },
+    })
 })
 
--- nvim_lsp.ccls.setup{ on_attach=on_attach }
+local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
-vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
-  vim.lsp.diagnostic.on_publish_diagnostics, {
-    virtual_text = true,
-    signs = true,
-    update_in_insert = true,
-  }
+require("lspconfig")["tinymist"].setup {
+    settings = {
+        formatterMode = "typstyle",
+        exportPdf = "onType",
+        semanticTokens = "disable"
+    }
+}
+
+require'lspconfig'.clangd.setup{
+    capabilities = capabilities
+}
+
+require'lspconfig'.rust_analyzer.setup{
+    capabilities = capabilities
+}
+
+
+require'lspconfig'.pylsp.setup{
+    capabilities = capabilities
+}
+
+
+
+vim.api.nvim_create_user_command("OpenPdf", function()
+  local filepath = vim.api.nvim_buf_get_name(0)
+  if filepath:match("%.typ$") then
+    -- os.execute("open " .. vim.fn.shellescape(filepath:gsub("%.typ$", ".pdf")))
+    -- replace open with your preferred pdf viewer
+    os.execute("zathura " .. vim.fn.shellescape(filepath:gsub("%.typ$", ".pdf")) .. " & > /dev/null 2> /dev/null")
+  end
+end, {})
+
+-- Reserve a space in the gutter
+-- This will avoid an annoying layout shift in the screen
+vim.opt.signcolumn = 'yes'
+
+-- Add cmp_nvim_lsp capabilities settings to lspconfig
+-- This should be executed before you configure any language server
+local lspconfig_defaults = require('lspconfig').util.default_config
+lspconfig_defaults.capabilities = vim.tbl_deep_extend(
+  'force',
+  lspconfig_defaults.capabilities,
+  require('cmp_nvim_lsp').default_capabilities()
 )
+
+-- This is where you enable features that only work
+-- if there is a language server active in the file
+vim.api.nvim_create_autocmd('LspAttach', {
+  desc = 'LSP actions',
+  callback = function(event)
+    local opts = {buffer = event.buf}
+
+    vim.keymap.set('n', 'K', '<cmd>lua vim.lsp.buf.hover()<cr>', opts)
+    vim.keymap.set('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<cr>', opts)
+    vim.keymap.set('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<cr>', opts)
+    vim.keymap.set('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<cr>', opts)
+    vim.keymap.set('n', 'go', '<cmd>lua vim.lsp.buf.type_definition()<cr>', opts)
+    vim.keymap.set('n', 'gr', '<cmd>lua vim.lsp.buf.references()<cr>', opts)
+    vim.keymap.set('n', 'gs', '<cmd>lua vim.lsp.buf.signature_help()<cr>', opts)
+    vim.keymap.set('n', '<F2>', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
+    vim.keymap.set({'n', 'x'}, '<F3>', '<cmd>lua vim.lsp.buf.format({async = true})<cr>', opts)
+    vim.keymap.set('n', '<F4>', '<cmd>lua vim.lsp.buf.code_action()<cr>', opts)
+  end,
+})
+
 EOF
+endif
 
 endif
 

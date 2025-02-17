@@ -7,7 +7,8 @@ map r reload
 map R rotate
 map K zoom in
 map J zoom out
-map I index_navigate
+
+set database sqlite
 
 # Base16 Tomorrow Night
 # Author: Chris Kempson (http://chriskempson.com)
@@ -30,8 +31,8 @@ set notification-error-fg       "#cc6666"
 set notification-warning-bg     "#1d1f21"
 set notification-warning-fg     "#cc6666"
 
-set highlight-color             "#f0c674"
-set highlight-active-color      "#81a2be"
+#set highlight-color             "#f0c674"
+#set highlight-active-color      "#81a2be"
 
 set completion-bg               "#282a2e"
 set completion-fg               "#81a2be"

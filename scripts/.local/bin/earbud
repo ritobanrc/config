@@ -1,13 +1,14 @@
 #!/bin/bash
 
-bluetoothctl connect 00:60:DE:00:10:41
+#bluetoothctl connect 00:60:DE:00:10:41
+bluetoothctl connect 40:DA:5C:CF:A6:C6
 
-while [ $(pactl list sinks | grep "EarFun Air" | wc -l) == 0 ]
+while [ $(pactl list sinks | grep "AirPods" | wc -l) == 0 ]
 do 
     sleep 0.1
 done
 
-pactl set-default-sink bluez_output.00_60_DE_00_10_41.1
+pactl set-default-sink bluez_output.40_DA_5C_CF_A6_C6.1
 
 sleep 3
 keymaps
