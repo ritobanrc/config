@@ -1,6 +1,9 @@
 # If you come from bash you might have to change your $PATH.
 export PATH=$HOME/.local/bin:/usr/local/bin:$PATH
 #
+
+export PATH=$PATH:/opt/homebrew/bin
+
 #eval "$(starship init zsh)"
 eval "$(zoxide init zsh)"
 
@@ -194,6 +197,11 @@ unset __conda_setup
 
 alias ncspot="flatpak run io.github.hrkfdn.ncspot"
 
-source ~/.elan/env
+# source ~/.elan/env
 
 export QSYS_ROOTDIR="/home/ritoban/intelFPGA_lite/23.1std/quartus/sopc_builder/bin"
+# export PATH=/usr/local/bin:/usr/bin:/home/ritoban/.juliaup/bin:/Users/ritoban/.local/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/ritoban/dev/PhysBAM/Scripts/misc:/Users/ritoban/dev/PhysBAM/Projects/opengl_3d:/Users/ritoban/dev/PhysBAM/Projects/opengl_2d:/Users/ritoban/.local/share/gem/ruby/3.3.0/bin
+export PATH=$PATH:/Users/ritoban/Library/Python/3.9/bin
+export PATH=$PATH:/Users/ritoban/.ghcup/bin
+
+source ~/.cargo/env

@@ -1,8 +1,9 @@
 #!/bin/bash
 
-cd $HOME/OneDrive/papers
-filename=$(find -name "*.pdf" | fzf)
+cd "$HOME/OneDrive - UC San Diego/papers"
+filename=$(fd -e pdf | fzf)
 
-zathura --fork "$filename" &
+#zathura --fork "$filename"
+open "$filename"
 
-sleep 1
+#sleep 1

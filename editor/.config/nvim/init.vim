@@ -33,6 +33,7 @@ call plug#begin($BASE.'/plugged')
 "Plug 'kaarmu/typst.vim'
 "Plug 'MrPicklePinosaur/typst-conceal.vim', {'for': 'typst'}   " vim plug
 
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/goyo.vim'
 "Plug 'neoclide/coc.nvim', { 'branch': 'release' }
@@ -81,7 +82,7 @@ Plug 'preservim/tagbar'
 
 " TODO: switch to lsp-saga
 Plug 'ray-x/lsp_signature.nvim'
-Plug 'ActivityWatch/aw-watcher-vim'
+" Plug 'ActivityWatch/aw-watcher-vim'
 
 "Plug 'lervag/vimtex'
 
@@ -553,7 +554,7 @@ let g:tagbar_type_markdown = {
 
 " ------ autocmd ------
 augroup AutoRun
-    autocmd FileType python nnoremap <leader>w :wa <bar> vsplit <bar> term python %<CR>
+    autocmd FileType python nnoremap <leader>w :wa <bar> vsplit <bar> term python3 %<CR>
     autocmd FileType rust nnoremap <leader>w :wa <bar> vsplit <bar> term cargo run<CR>
     autocmd Filetype markdown setlocal spell wrap linebreak nolist
     autocmd FileType tex,latex  setlocal spell wrap linebreak nolist
@@ -718,6 +719,9 @@ require'lspconfig'.pylsp.setup{
     capabilities = capabilities
 }
 
+require'lspconfig'.hls.setup{
+    capabilities = capabilities
+}
 
 
 vim.api.nvim_create_user_command("OpenPdf", function()
@@ -725,7 +729,7 @@ vim.api.nvim_create_user_command("OpenPdf", function()
   if filepath:match("%.typ$") then
     -- os.execute("open " .. vim.fn.shellescape(filepath:gsub("%.typ$", ".pdf")))
     -- replace open with your preferred pdf viewer
-    os.execute("zathura " .. vim.fn.shellescape(filepath:gsub("%.typ$", ".pdf")) .. " & > /dev/null 2> /dev/null")
+    os.execute("open -a Zathura " .. vim.fn.shellescape(filepath:gsub("%.typ$", ".pdf")))
   end
 end, {})
 

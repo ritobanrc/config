@@ -3,9 +3,11 @@
 alias q='exit 0'
 alias d='clear'
 
-alias ls='exa'
+alias ls='eza'
 #alias la='ls -Ah'
 #alias ll='ls -lAh'
+
+alias dircolors='gdircolors'
 
 alias mkx='chmod +x'
 alias mkdir='mkdir -pv'

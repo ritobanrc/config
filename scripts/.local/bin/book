@@ -1,6 +1,10 @@
-#!/bin/bash
+#!/bin/zsh
 
-cd $HOME/Downloads/ebooks/
+source ~/.zshrc
+
+# cd /Usrs/ritoban/Library/CloudStorage/OneDrive-UCSanDiego/ebooks
+cd "/Users/ritoban/OneDrive - UC San Diego/ebooks"
+
 
 name=`fd -e epub -e pdf -e djvu | while read line ; 
 do
@@ -9,17 +13,18 @@ done | fzf --reverse`
 
 echo $name
 
-filename=`find -name "$name"`
-echo "Opening " $filename
+filename=`fd --fixed-strings "$name"`
+echo "Opening " $filename "\n"
+
 
 case "$name" in 
 *.pdf )
-    zathura --fork "$filename" & ;;
+    open "$filename" ;;
 *.djvu )
-    zathura --fork "$filename" & ;;
+    open -a Zathura "$filename" ;;
 *.epub )
     #2>/dev/null 1>&2 nohup ebook-viewer "$filename" & 
-    zathura --fork "$filename" & ;;
+    open "$filename" ;;
 esac
 
-sleep 1
+#sleep 1
