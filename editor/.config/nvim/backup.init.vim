@@ -723,6 +723,15 @@ require'lspconfig'.hls.setup{
     capabilities = capabilities
 }
 
+require'lspconfig'.jdtls.setup{
+  settings = {
+    java = {
+        -- Custom eclipse.jdt.ls options go here
+    },
+  },
+}
+
+
 
 vim.api.nvim_create_user_command("OpenPdf", function()
   local filepath = vim.api.nvim_buf_get_name(0)

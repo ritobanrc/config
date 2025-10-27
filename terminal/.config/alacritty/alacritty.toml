@@ -597,7 +597,7 @@ y = 0
 style = "Italic"
 
 [font.normal]
-# family = "IBM Plex Mono"
+family = "Hack Nerd Font"
 style = "Regular"
 
 [font.offset]

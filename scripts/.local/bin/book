@@ -21,7 +21,8 @@ case "$name" in
 *.pdf )
     open "$filename" ;;
 *.djvu )
-    open -a Zathura "$filename" ;;
+    #open -a Zathura "$filename" ;;
+    zathura --fork "$filename" ;;
 *.epub )
     #2>/dev/null 1>&2 nohup ebook-viewer "$filename" & 
     open "$filename" ;;
