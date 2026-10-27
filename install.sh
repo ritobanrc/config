@@ -12,8 +12,8 @@ set -euo pipefail
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 PACMAN_PACKAGES=(
-    # core
-    git stow make gcc unzip curl wget tar gzip python nodejs npm rustup
+    # core (npm pulls in a nodejs; don't name nodejs, it conflicts with nodejs-lts-*)
+    git stow make gcc unzip curl wget tar gzip python npm rustup
     # editor
     neovim vim ripgrep fd tree-sitter-cli zathura zathura-pdf-mupdf tesseract-data-eng
     # terminal
