@@ -58,11 +58,19 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 
 -- Spell and wrap settings for markdown/tex
 vim.api.nvim_create_autocmd("FileType", {
-  pattern = { "markdown", "tex", "latex" },
+  pattern = { "md", "markdown", "tex", "latex" },
   callback = function()
+    vim.cmd.syntax("on")
+    vim.opt_local.spell = true
     vim.opt_local.spell = true
     vim.opt_local.wrap = true
     vim.opt_local.linebreak = true
     vim.opt_local.list = false
   end,
+})
+
+vim.filetype.add({
+  extension = {
+    typ = 'typst',
+  },
 })

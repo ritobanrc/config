@@ -26,6 +26,14 @@ map("t", "<Esc>", "<C-\\><C-n>")
 -- Visual line navigation
 map("n", "j", "gj", { silent = true })
 map("n", "k", "gk", { silent = true })
+map("n", "0", "g0", { silent = true })
+map("n", "$", "g$", { silent = true })
+
+-- Add these visual mode mappings
+map("v", "j", "gj", { silent = true })
+map("v", "k", "gk", { silent = true })
+map("v", "0", "g0", { silent = true })
+map("v", "$", "g$", { silent = true })
 
 -- Better cursor positioning
 map("n", "H", "^")
@@ -55,3 +63,27 @@ map("n", "<leader>q", ":bd<CR>:silent tabclose<CR>gT", { desc = "Close buffer an
 -- Tab navigation
 map("n", "<Tab>", ":tabnext<CR>", { silent = true, desc = "Next tab" })
 map("n", "<S-Tab>", ":tabfirst<CR>", { silent = true, desc = "First tab" })
+
+map("n", "<C-t>", "<cmd>AerialToggle!<CR>")
+
+map("n", "<Leader>se", ":set spell spelllang=en<CR>")
+map("n", "<Leader>ss", ":set spell spelllang=es keymap=accents<CR>")
+
+map("i", "<C-s>", "<c-g>u<Esc>[s1z=`]a<c-g>u")
+
+map("i", "<C-l>", "→<space>")
+map("i", "<C-h>", "←<space>")
+map("i", "<C-j>", "↓<space>")
+map("i", "<C-k>", "↑<space>")
+
+
+map("n", "<Leader>c<leader>", "gcc", {
+        remap = true,
+        desc = "Toggle comment"
+      })
+
+-- Visual mode: remap your leader key to the native 'gc'
+map("x", "<Leader>c<leader>", "gc", {
+  remap = true, 
+  desc = "Toggle comment"
+})
