@@ -106,9 +106,14 @@ layout {
 // Niri starts xwayland-satellite itself when it's installed, so X11 apps work.
 spawn-at-startup "waybar"
 spawn-at-startup "mako"
-// A different random wallpaper on each workspace, new ones every 10 minutes
-spawn-at-startup "awww-daemon"
-spawn-sh-at-startup "~/.local/bin/wsbg"
+// A new random wallpaper every 10 minutes
+spawn-sh-at-startup "while true; do ~/.local/bin/setbg; sleep 600; done"
+
+// Dark theme everywhere. Firefox, Electron apps (Claude, Discord) and
+// libadwaita apps read color-scheme through xdg-desktop-portal-gnome; older
+// GTK3 apps need the dark Adwaita theme by name.
+spawn-sh-at-startup "gsettings set org.gnome.desktop.interface color-scheme prefer-dark"
+spawn-sh-at-startup "gsettings set org.gnome.desktop.interface gtk-theme Adwaita-dark"
 spawn-at-startup "discord"
 
 // Windows without titlebars, like i3
