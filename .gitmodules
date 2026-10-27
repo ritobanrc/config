@@ -1,3 +1,3 @@
 [submodule "terminal/base16-tmux"]
-	path = terminal/base16-tmux
+	path = shell/.config/tmux/base16-tmux
 	url = https://github.com/tinted-theming/base16-tmux

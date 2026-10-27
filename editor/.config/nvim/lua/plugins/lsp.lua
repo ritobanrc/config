@@ -68,7 +68,7 @@ return {
                 update_in_insert = false,
                 severity_sort = true,
                 float = {
-                    source = "always",
+                    source = true,
                     border = "rounded",
                     header = "",
                     prefix = "",
@@ -93,8 +93,8 @@ return {
 
                     vim.keymap.set("n", "<leader>d", vim.diagnostic.open_float,
                     { buffer = args.buf, desc = "Show diagnostics" })
-                    vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, opts)
-                    vim.keymap.set("n", "]d", vim.diagnostic.goto_next, opts)
+                    vim.keymap.set("n", "[d", function() vim.diagnostic.jump({ count = -1, float = true }) end, opts)
+                    vim.keymap.set("n", "]d", function() vim.diagnostic.jump({ count = 1, float = true }) end, opts)
 
                     vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
                     vim.keymap.set("n", "gD", vim.lsp.buf.declaration, opts)
@@ -102,8 +102,6 @@ return {
                     vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts)
                     vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
                     vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
-                    vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, opts)
-                    vim.keymap.set("n", "]d", vim.diagnostic.goto_next, opts)
                     vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
                 end,
             })

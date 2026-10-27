@@ -3,11 +3,12 @@
 alias q='exit 0'
 alias d='clear'
 
-alias ls='eza'
+(( $+commands[eza] )) && alias ls='eza'
 #alias la='ls -Ah'
 #alias ll='ls -lAh'
 
-alias dircolors='gdircolors'
+# GNU dircolors is called gdircolors on macOS
+(( $+commands[gdircolors] )) && alias dircolors='gdircolors'
 
 alias mkx='chmod +x'
 alias mkdir='mkdir -pv'
@@ -48,8 +49,8 @@ alias prm='sudo pacman -Rnsc' # really remove, configs and all
 
 alias please='sudo'
 
-alias cfv='nvim ~/.config/nvim/init.vim'
-alias cfa='nvim ~/.config/alacritty/alacritty.yml'
+alias cfv='nvim ~/.config/nvim/init.lua'
+alias cfa='nvim ~/.config/alacritty/alacritty.toml'
 alias cfz='nvim ~/.zshrc'
 
 # aliases inside tmux session

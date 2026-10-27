@@ -514,9 +514,6 @@ chars = """
 """
 key = "NumpadEnter"
 
-[general]
-working_directory = "None"
-
 [terminal]
 
 [[mouse.bindings]]
@@ -617,9 +614,6 @@ multiplier = 3
 [selection]
 save_to_clipboard = false
 semantic_escape_chars = ''',│`|:"' ()[]{}<>'''
-
-[terminal.shell]
-program = "/bin/zsh"
 
 [window]
 decorations = "none"

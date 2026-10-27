@@ -37,7 +37,7 @@ vim.opt.directory = cache_dir .. "/swap//"
 -- Create directories if they don't exist
 local function ensure_dir(path)
   if vim.fn.isdirectory(path) == 0 then
-    vim.fn.mkdir(path, "p", 0700)
+    vim.fn.mkdir(path, "p", tonumber("700", 8)) -- Lua has no octal literals
   end
 end
 

@@ -5,12 +5,12 @@ export PATH=$HOME/.local/bin:/usr/local/bin:$PATH
 export PATH=$PATH:/opt/homebrew/bin
 
 #eval "$(starship init zsh)"
-eval "$(zoxide init zsh)"
+(( $+commands[zoxide] )) && eval "$(zoxide init zsh)"
 
 #[[ -s /etc/profile.d/autojump.zsh ]] && source /etc/profile.d/autojump.zsh
 
 # Path to your oh-my-zsh installation.
-export ZSH="/home/ritoban/.oh-my-zsh"
+export ZSH="$HOME/.oh-my-zsh"
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
@@ -87,7 +87,7 @@ source ~/.zsh/settings/aliases.zsh
 source ~/.zsh/settings/bindings.zsh
 source ~/.zsh/settings/completion.zsh
 
-source <(fzf --zsh)
+(( $+commands[fzf] )) && source <(fzf --zsh)
 
  #source  /usr/share/fzf/completion.zsh
 #source  /usr/share/fzf/shell/key-bindings.zsh
@@ -105,7 +105,7 @@ echo -ne '\e[5 q' # Use beam shape cursor on startup.
 
 export MANPAGER='nvim +Man!'
 
-export CARGO_TARGET_DIR="/home/ritoban/.cargo/target"
+export CARGO_TARGET_DIR="$HOME/.cargo/target"
 
 export PHYSBAM=$HOME/dev/PhysBAM
 export PATH=$PATH:$PHYSBAM/Scripts/misc:$PHYSBAM/Projects/opengl_3d:$PHYSBAM/Projects/opengl_2d
@@ -182,17 +182,15 @@ export PATH
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/usr/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/usr/etc/profile.d/conda.sh" ]; then
+if [ -x /usr/bin/conda ]; then
+    __conda_setup="$('/usr/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+    if [ $? -eq 0 ]; then
+        eval "$__conda_setup"
+    elif [ -f "/usr/etc/profile.d/conda.sh" ]; then
         . "/usr/etc/profile.d/conda.sh"
-    else
-        export PATH="/usr/bin:$PATH"
     fi
+    unset __conda_setup
 fi
-unset __conda_setup
 # <<< conda initialize <<<
 
 alias ncspot="flatpak run io.github.hrkfdn.ncspot"
@@ -204,4 +202,4 @@ export QSYS_ROOTDIR="/home/ritoban/intelFPGA_lite/23.1std/quartus/sopc_builder/b
 export PATH=$PATH:/Users/ritoban/Library/Python/3.9/bin
 export PATH=$PATH:/Users/ritoban/.ghcup/bin
 
-source ~/.cargo/env
+[[ -f ~/.cargo/env ]] && source ~/.cargo/env
