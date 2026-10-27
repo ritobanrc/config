@@ -1,11 +1,17 @@
 #!/bin/bash
 
-export DISPLAY=":0"
-
 source ~/.config/user-dirs.dirs
 wallpaper_dir="$XDG_PICTURES_DIR/wall"
 
-for m in $(xrandr --query | grep " connected" | cut -d" " -f1); do
+if [ "$XDG_CURRENT_DESKTOP" == "niri" ]; then
+    outputs=$(niri msg outputs | sed -n 's/^Output .*(\(.*\))$/\1/p')
+    swaybg_args=()
+else
+    export DISPLAY=":0"
+    outputs=$(xrandr --query | grep " connected" | cut -d" " -f1)
+fi
+
+for m in $outputs; do
     wallpaper_file=$(fd . "$wallpaper_dir" -e "jpg" -e "jpeg" -e "png" -E "nsfw" --type f | shuf -n 1)
 
 
@@ -27,7 +33,9 @@ for m in $(xrandr --query | grep " connected" | cut -d" " -f1); do
 
     echo $wallpaper_file
 
-    if [ "$(pgrep gnome | wc -l)" -ge 1 ]; then
+    if [ "$XDG_CURRENT_DESKTOP" == "niri" ]; then
+        swaybg_args+=(-o "$m" -i "$wallpaper_file" -m fill)
+    elif [ "$(pgrep gnome | wc -l)" -ge 1 ]; then
         gsettings set org.gnome.desktop.background picture-uri-dark "$wallpaper_file"
     else
         xwallpaper --output "$m" --zoom "$wallpaper_file"
@@ -36,3 +44,12 @@ for m in $(xrandr --query | grep " connected" | cut -d" " -f1); do
     #xfconf-query -c xfce4-desktop  -p /backdrop/screen0/monitor$m/workspace0/last-image -s "$wallpaper_file"
     #
 done
+
+# One swaybg draws every output; start the new one before stopping the old one
+# so the screen doesn't flash
+if [ ${#swaybg_args[@]} -gt 0 ]; then
+    old_swaybg=$(pgrep -x swaybg)
+    setsid -f swaybg "${swaybg_args[@]}" >/dev/null 2>&1
+    sleep 0.5
+    [ -n "$old_swaybg" ] && kill $old_swaybg
+fi

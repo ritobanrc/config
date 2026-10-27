@@ -1,0 +1,301 @@
+// Niri config, modelled on my old i3 / GNOME / Xfce setups: the key next to
+// the spacebar is the main modifier, Alt+1..0 switch between ten fixed
+// workspaces, Alt+Shift+1..0 move windows between them.
+//
+// Alt and Super are swapped in xkb below, so the physical Alt key sends Super.
+// Niri binds on Super ("Mod"), which apps don't use, and apps still get a real
+// Alt from the physical Super/Windows key. "Alt" in the comments here means
+// the physical key next to the spacebar.
+//
+// Docs: https://yalter.github.io/niri/Configuration:-Introduction
+// Check after editing: niri validate
+
+input {
+    // Every "Mod" below means Super (the physical Alt key, after the swap).
+    // Inside a nested niri window it's Alt, so the two don't fight.
+    mod-key "Super"
+    mod-key-nested "Alt"
+
+    keyboard {
+        xkb {
+            layout "us"
+            // Caps Lock is another Ctrl (same as GNOME's caps:ctrl_modifier),
+            // and Alt and Super trade places
+            options "ctrl:nocaps,altwin:swap_alt_win"
+        }
+        numlock
+    }
+
+    touchpad {
+        tap
+        dwt
+        // GNOME had natural scrolling turned off
+    }
+
+    mouse {
+        accel-speed -0.17
+    }
+
+    // Focus follows the mouse, but hovering a window that's partly off screen
+    // doesn't scroll the view to it. The pointer jumps to a window focused
+    // with the keyboard.
+    focus-follows-mouse max-scroll-amount="0%"
+    warp-mouse-to-focus
+}
+
+// Laptop panel; copy this block for each monitor (`niri msg outputs` lists them)
+/-output "eDP-1" {
+    mode "1920x1080@120.030"
+    scale 1.5
+}
+
+// Ten fixed workspaces like GNOME (num-workspaces=10, dynamic-workspaces=false).
+// Named workspaces always exist and keep their order, so Alt+3 always goes to
+// the same place. Niri keeps one empty unnamed workspace below them as scratch
+// space. Discord opens on workspace 10 (window rule below).
+workspace "1"
+workspace "2"
+workspace "3"
+workspace "4"
+workspace "5"
+workspace "6"
+workspace "7"
+workspace "8"
+workspace "9"
+workspace "10"
+
+layout {
+    gaps 8
+    center-focused-column "never"
+    always-center-single-column
+
+    preset-column-widths {
+        proportion 0.33333
+        proportion 0.5
+        proportion 0.66667
+        proportion 1.0
+    }
+    default-column-width { proportion 0.5; }
+
+    preset-window-heights {
+        proportion 0.33333
+        proportion 0.5
+        proportion 0.66667
+        proportion 1.0
+    }
+
+    focus-ring {
+        width 3
+        active-color "#4a86d8"
+        inactive-color "#3b3b3b"
+    }
+
+    border {
+        off
+    }
+
+    shadow {
+        on
+        softness 30
+        spread 5
+        offset x=0 y=5
+        color "#0007"
+    }
+}
+
+// Niri starts xwayland-satellite itself when it's installed, so X11 apps work.
+spawn-at-startup "waybar"
+spawn-at-startup "mako"
+spawn-sh-at-startup "~/.local/bin/setbg"
+spawn-at-startup "discord"
+
+// Windows without titlebars, like i3
+prefer-no-csd
+
+hotkey-overlay {
+    // Alt+Shift+/ still shows the list of keys
+    skip-at-startup
+}
+
+screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
+
+window-rule {
+    match app-id=r#"firefox$"# title="^Picture-in-Picture$"
+    open-floating true
+}
+
+window-rule {
+    match app-id=r#"^discord$"#
+    open-on-workspace "10"
+    open-focused false
+}
+
+// Matplotlib figures float. The title is the same for every backend; the
+// app-id is only set by the GTK ones.
+window-rule {
+    match title=r#"^Figure \d+$"#
+    match app-id=r#"^org\.matplotlib\."#
+    open-floating true
+}
+
+// Small dialogs float
+window-rule {
+    match app-id=r#"^org\.gnome\.Calculator$"#
+    match app-id=r#"^pavucontrol$"#
+    match app-id=r#"^nm-connection-editor$"#
+    match title=r#"^(Open|Save) (File|Folder|As)"#
+    open-floating true
+}
+
+window-rule {
+    geometry-corner-radius 6
+    clip-to-geometry true
+    // Niri fills the area behind a window with the focus-ring color, which
+    // shows through see-through windows (alacritty has opacity 0.9). Draw
+    // only the ring itself.
+    draw-border-with-background false
+}
+
+binds {
+    Mod+Shift+Slash { show-hotkey-overlay; }
+
+    // Apps (same keys as GNOME and Xfce)
+    Mod+Return hotkey-overlay-title="Terminal" { spawn "alacritty"; }
+    Mod+W      hotkey-overlay-title="Web browser" { spawn "firefox"; }
+    Mod+E      hotkey-overlay-title="File manager" { spawn "nautilus" "--new-window"; }
+    Mod+Space  hotkey-overlay-title="App launcher" { spawn "fuzzel"; }
+    Mod+F1     hotkey-overlay-title=null { spawn "fuzzel"; }
+    Mod+Alt+L  hotkey-overlay-title="Lock screen" { spawn "swaylock" "-f" "-c" "000000"; }
+
+    // Windows
+    Mod+Q repeat=false { close-window; }
+    Mod+F { maximize-column; }
+    Mod+Shift+F { fullscreen-window; }
+    Mod+F11 { fullscreen-window; }
+    Mod+Ctrl+F { expand-column-to-available-width; }
+    Mod+C { center-column; }
+    Mod+V { toggle-window-floating; }
+    Mod+Shift+V { switch-focus-between-floating-and-tiling; }
+    Mod+T { toggle-column-tabbed-display; }
+
+    // Size (Xfce's Alt+R resize)
+    Mod+R { switch-preset-column-width; }
+    Mod+Shift+R { switch-preset-window-height; }
+    Mod+Ctrl+R { reset-window-height; }
+    Mod+Minus { set-column-width "-10%"; }
+    Mod+Equal { set-column-width "+10%"; }
+    Mod+Shift+Minus { set-window-height "-10%"; }
+    Mod+Shift+Equal { set-window-height "+10%"; }
+
+    // Focus with vim keys or arrows. Up and down cross into the next workspace
+    // at the top or bottom of a column.
+    Mod+H     { focus-column-left; }
+    Mod+L     { focus-column-right; }
+    Mod+J     { focus-window-or-workspace-down; }
+    Mod+K     { focus-window-or-workspace-up; }
+    Mod+Left  { focus-column-left; }
+    Mod+Right { focus-column-right; }
+    Mod+Down  { focus-window-or-workspace-down; }
+    Mod+Up    { focus-window-or-workspace-up; }
+    Mod+Home  { focus-column-first; }
+    Mod+End   { focus-column-last; }
+
+    // Move (Xfce's Shift+Alt+HJKL tiling)
+    Mod+Shift+H     { move-column-left; }
+    Mod+Shift+L     { move-column-right; }
+    Mod+Shift+J     { move-window-down-or-to-workspace-down; }
+    Mod+Shift+K     { move-window-up-or-to-workspace-up; }
+    Mod+Shift+Left  { move-column-left; }
+    Mod+Shift+Right { move-column-right; }
+    Mod+Shift+Down  { move-window-down-or-to-workspace-down; }
+    Mod+Shift+Up    { move-window-up-or-to-workspace-up; }
+    Mod+Shift+Home  { move-column-to-first; }
+    Mod+Shift+End   { move-column-to-last; }
+
+    // Put windows into a shared column, or take them out
+    Mod+BracketLeft  { consume-or-expel-window-left; }
+    Mod+BracketRight { consume-or-expel-window-right; }
+
+    // Workspaces
+    Mod+1 { focus-workspace "1"; }
+    Mod+2 { focus-workspace "2"; }
+    Mod+3 { focus-workspace "3"; }
+    Mod+4 { focus-workspace "4"; }
+    Mod+5 { focus-workspace "5"; }
+    Mod+6 { focus-workspace "6"; }
+    Mod+7 { focus-workspace "7"; }
+    Mod+8 { focus-workspace "8"; }
+    Mod+9 { focus-workspace "9"; }
+    Mod+0 { focus-workspace "10"; }
+    Mod+Shift+1 { move-column-to-workspace "1"; }
+    Mod+Shift+2 { move-column-to-workspace "2"; }
+    Mod+Shift+3 { move-column-to-workspace "3"; }
+    Mod+Shift+4 { move-column-to-workspace "4"; }
+    Mod+Shift+5 { move-column-to-workspace "5"; }
+    Mod+Shift+6 { move-column-to-workspace "6"; }
+    Mod+Shift+7 { move-column-to-workspace "7"; }
+    Mod+Shift+8 { move-column-to-workspace "8"; }
+    Mod+Shift+9 { move-column-to-workspace "9"; }
+    Mod+Shift+0 { move-column-to-workspace "10"; }
+
+    Mod+Page_Down       { focus-workspace-down; }
+    Mod+Page_Up         { focus-workspace-up; }
+    Mod+Shift+Page_Down { move-column-to-workspace-down; }
+    Mod+Shift+Page_Up   { move-column-to-workspace-up; }
+    Mod+Ctrl+Down       { focus-workspace-down; }
+    Mod+Ctrl+Up         { focus-workspace-up; }
+    Mod+Ctrl+Shift+Down { move-column-to-workspace-down; }
+    Mod+Ctrl+Shift+Up   { move-column-to-workspace-up; }
+
+    // Monitors
+    Mod+Ctrl+H           { focus-monitor-left; }
+    Mod+Ctrl+L           { focus-monitor-right; }
+    Mod+Ctrl+Left        { focus-monitor-left; }
+    Mod+Ctrl+Right       { focus-monitor-right; }
+    Mod+Ctrl+Shift+H     { move-column-to-monitor-left; }
+    Mod+Ctrl+Shift+L     { move-column-to-monitor-right; }
+    Mod+Ctrl+Shift+Left  { move-column-to-monitor-left; }
+    Mod+Ctrl+Shift+Right { move-column-to-monitor-right; }
+
+    // Alt + mouse wheel: up/down changes workspace, left/right (or Shift) changes column
+    Mod+WheelScrollDown cooldown-ms=150 { focus-workspace-down; }
+    Mod+WheelScrollUp   cooldown-ms=150 { focus-workspace-up; }
+    Mod+WheelScrollRight { focus-column-right; }
+    Mod+WheelScrollLeft  { focus-column-left; }
+    Mod+Shift+WheelScrollDown { focus-column-right; }
+    Mod+Shift+WheelScrollUp   { focus-column-left; }
+
+    // Overview of every workspace (closest thing to Xfce's Alt+D show desktop)
+    Mod+O repeat=false { toggle-overview; }
+    Mod+D repeat=false { toggle-overview; }
+
+    // Screenshots
+    Print { screenshot; }
+    Ctrl+Print { screenshot-screen; }
+    Mod+Print { screenshot-window; }
+
+    // Media keys
+    XF86AudioRaiseVolume allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.05+ -l 1.0"; }
+    XF86AudioLowerVolume allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.05-"; }
+    XF86AudioMute        allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"; }
+    XF86AudioMicMute     allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"; }
+    XF86AudioPlay        allow-when-locked=true { spawn "playerctl" "play-pause"; }
+    XF86AudioNext        allow-when-locked=true { spawn "playerctl" "next"; }
+    XF86AudioPrev        allow-when-locked=true { spawn "playerctl" "previous"; }
+
+    // Session
+    // Alt+Escape lets an app (like a VM or remote desktop) have the Mod keys
+    Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
+    Mod+Shift+E { quit; }
+    Mod+Shift+P { power-off-monitors; }
+}
+
+// Window switcher on Alt+Tab (the physical key, so Mod+Tab here)
+recent-windows {
+    binds {
+        Mod+Tab         { next-window; }
+        Mod+Shift+Tab   { previous-window; }
+        Mod+Grave       { next-window filter="app-id"; }
+        Mod+Shift+Grave { previous-window filter="app-id"; }
+    }
+}
