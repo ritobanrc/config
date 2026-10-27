@@ -1,0 +1,98 @@
+#!/bin/bash
+# Give every niri workspace its own random wallpaper from $XDG_PICTURES_DIR/wall,
+# and pick new ones every 10 minutes. Runs until niri exits.
+#
+# Usage: wsbg [minutes]
+# `pkill -USR1 -x wsbg` (or `setbg`) picks new wallpapers right away.
+
+interval=$(( ${1:-10} * 60 ))
+transition=(--transition-type fade --transition-duration 0.4 --transition-fps 60)
+
+source ~/.config/user-dirs.dirs
+wallpaper_dir="$XDG_PICTURES_DIR/wall"
+
+declare -A image   # workspace id -> wallpaper
+declare -A output  # workspace id -> output it's on
+declare -A active  # output -> id of the workspace it shows
+declare -A shown   # output -> wallpaper currently on it
+
+# Deal wallpapers from a shuffled list so workspaces don't repeat one
+shuffle() {
+    mapfile -t files < <(fd . "$wallpaper_dir" -e "jpg" -e "jpeg" -e "png" -E "nsfw" --type f | shuf)
+    next=0
+    image=()
+}
+
+show() {
+    local ws=$1 out=${output[$1]}
+    [ -n "$out" ] && [ ${#files[@]} -gt 0 ] || return
+    if [ -z "${image[$ws]}" ]; then
+        image[$ws]=${files[next % ${#files[@]}]}
+        next=$(( next + 1 ))
+    fi
+    if [ "${shown[$out]}" != "${image[$ws]}" ]; then
+        awww img -o "$out" "${transition[@]}" "${image[$ws]}" && shown[$out]=${image[$ws]}
+    fi
+}
+
+# New wallpapers for every workspace, starting with the ones on screen
+reroll() {
+    deadline=$(( SECONDS + interval ))
+    shuffle
+    for ws in "${active[@]}"; do show "$ws"; done
+}
+
+# Bash runs this while read is waiting, then goes back to waiting
+trap reroll USR1
+
+until awww query >/dev/null 2>&1; do
+    pgrep -x awww-daemon >/dev/null || setsid -f awww-daemon >/dev/null 2>&1
+    sleep 0.2
+done
+
+reroll
+
+while true; do
+    wait_for=$(( deadline - SECONDS ))
+    read -r -t $(( wait_for > 0 ? wait_for : 1 )) -u 3 event id out is_active
+    status=$?
+
+    (( SECONDS >= deadline )) && reroll
+
+    if (( status > 128 )); then
+        continue  # timed out
+    elif (( status != 0 )); then
+        break     # niri exited
+    fi
+
+    case $event in
+        # A full workspace list, one line per workspace, then "end"
+        ws)
+            seen+=("$id")
+            output[$id]=$out
+            [ "$is_active" == "true" ] && active[$out]=$id
+            ;;
+        end)
+            # Forget workspaces niri removed
+            for ws in "${!output[@]}"; do
+                [[ " ${seen[*]} " == *" $ws "* ]] || unset "output[$ws]" "image[$ws]"
+            done
+            seen=()
+            for ws in "${active[@]}"; do show "$ws"; done
+            ;;
+        act)
+            [ -n "${output[$id]}" ] || continue
+            active[${output[$id]}]=$id
+            show "$id"
+            ;;
+    esac
+done 3< <(
+    # This subshell is also called wsbg; don't let `pkill -USR1` kill it
+    trap '' USR1
+    niri msg --json event-stream | jq --unbuffered -r '
+        if .WorkspacesChanged then
+            (.WorkspacesChanged.workspaces[] | "ws \(.id) \(.output // "-") \(.is_active)"), "end"
+        elif .WorkspaceActivated then
+            "act \(.WorkspaceActivated.id)"
+        else empty end'
+)

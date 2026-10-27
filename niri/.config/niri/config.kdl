@@ -106,7 +106,9 @@ layout {
 // Niri starts xwayland-satellite itself when it's installed, so X11 apps work.
 spawn-at-startup "waybar"
 spawn-at-startup "mako"
-spawn-sh-at-startup "~/.local/bin/setbg"
+// A different random wallpaper on each workspace, new ones every 10 minutes
+spawn-at-startup "awww-daemon"
+spawn-sh-at-startup "~/.local/bin/wsbg"
 spawn-at-startup "discord"
 
 // Windows without titlebars, like i3

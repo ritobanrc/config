@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Under niri, wsbg owns the wallpapers; just ask it for new ones
+if [ "$XDG_CURRENT_DESKTOP" == "niri" ] && pkill -USR1 -x wsbg; then
+    exit
+fi
+
 source ~/.config/user-dirs.dirs
 wallpaper_dir="$XDG_PICTURES_DIR/wall"
 
