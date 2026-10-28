@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd $HOME/config
+cd $HOME/dev/config
 
 name=$(fd -H -E .git -t f | fzf -q "$1")
 

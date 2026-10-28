@@ -12,7 +12,7 @@
 
     "modules-left": ["niri/workspaces"],
     "modules-center": ["wlr/taskbar"],
-    "modules-right": ["tray", "mpris", "wireplumber", "network", "cpu", "memory", "clock"],
+    "modules-right": ["tray", "mpris", "wireplumber", "network", "cpu", "memory", "clock", "custom/power"],
 
     // Empty workspaces are dimmed in style.css rather than hidden, so Alt+1..0
     // keep their positions.
@@ -77,6 +77,21 @@
         "calendar": {
             "mode": "month",
             "format": { "today": "<span color='#4a86d8'><b>{}</b></span>" }
+        }
+    },
+
+    // Session menu: click the power icon for lock, suspend, log out, etc.
+    "custom/power": {
+        "format": "󰐥",
+        "tooltip": false,
+        "menu": "on-click",
+        "menu-file": "~/.config/waybar/power_menu.xml",
+        "menu-actions": {
+            "lock": "swaylock -f -c 000000",
+            "suspend": "systemctl suspend",
+            "logout": "niri msg action quit --skip-confirmation",
+            "reboot": "systemctl reboot",
+            "poweroff": "systemctl poweroff"
         }
     }
 }

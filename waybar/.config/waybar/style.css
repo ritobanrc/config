@@ -34,7 +34,8 @@ tooltip {
 #network,
 #cpu,
 #memory,
-#clock {
+#clock,
+#custom-power {
     background: @bg;
     border-radius: 17px;
     padding: 0 14px;
@@ -127,4 +128,39 @@ tooltip {
 
 #clock {
     font-weight: bold;
+}
+
+#custom-power {
+    font-size: 15px;
+    padding: 0 14px 0 12px;
+}
+
+#custom-power:hover {
+    background: @accent;
+    color: #ffffff;
+}
+
+/* The power menu */
+menu {
+    background: @bg;
+    border: 1px solid @bg-hi;
+    border-radius: 10px;
+    padding: 6px;
+}
+
+menuitem {
+    color: @fg;
+    padding: 6px 14px;
+    border-radius: 6px;
+}
+
+menuitem:hover {
+    background: @accent;
+    color: #ffffff;
+}
+
+menu separator {
+    background: @bg-hi;
+    min-height: 1px;
+    margin: 4px 6px;
 }
