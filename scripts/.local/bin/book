@@ -1,31 +1,37 @@
-#!/bin/zsh
+#!/usr/bin/env bash
+# Pick a book from the calibre library with fuzzel and open it in zathura.
+# Lists "Title — Authors" from calibre's metadata.db, one entry per book,
+# opening its best format (pdf > epub > djvu > mobi > azw3).
+set -euo pipefail
 
-source ~/.zshrc
+LIBRARY="${BOOKS_DIR:-$HOME/cloud/dropbox-mit/ebooks}"
+CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/book"
 
-# cd /Usrs/ritoban/Library/CloudStorage/OneDrive-UCSanDiego/ebooks
-cd "/Users/ritoban/OneDrive - UC San Diego/ebooks"
+rel=$(sqlite3 -separator $'\t' "file:$LIBRARY/metadata.db?mode=ro" "
+    SELECT replace(b.title, char(9), ' ') || ' — ' ||
+           (SELECT group_concat(name, ', ') FROM
+               (SELECT replace(a.name, '|', ',') AS name FROM books_authors_link l JOIN authors a ON a.id = l.author
+                WHERE l.book = b.id ORDER BY l.id)),
+           b.path || '/' || d.name || '.' || lower(d.format)
+    FROM books b JOIN data d ON d.id = (
+        SELECT id FROM data WHERE book = b.id
+        ORDER BY CASE format WHEN 'PDF' THEN 0 WHEN 'EPUB' THEN 1 WHEN 'DJVU' THEN 2
+                             WHEN 'MOBI' THEN 3 WHEN 'AZW3' THEN 4 ELSE 9 END
+        LIMIT 1)
+    ORDER BY b.sort" |
+    fuzzel --dmenu --prompt 'book> ' --width 80 --with-nth 1 --accept-nth 2) || exit 0
 
+file="$LIBRARY/$rel"
 
-name=`fd -e epub -e pdf -e djvu | while read line ; 
-do
-    basename "$line"
-done | fzf --reverse`
+# mupdf can't read azw3, so convert it once to a cached epub
+if [[ "$file" == *.azw3 ]]; then
+    epub="$CACHE/$(basename "$file" .azw3).epub"
+    if [[ ! -f "$epub" ]]; then
+        mkdir -p "$CACHE"
+        notify-send "book" "Converting $(basename "$file") to epub…"
+        ebook-convert "$file" "$epub" >/dev/null
+    fi
+    file="$epub"
+fi
 
-echo $name
-
-filename=`fd --fixed-strings "$name"`
-echo "Opening " $filename "\n"
-
-
-case "$name" in 
-*.pdf )
-    open "$filename" ;;
-*.djvu )
-    #open -a Zathura "$filename" ;;
-    zathura --fork "$filename" ;;
-*.epub )
-    #2>/dev/null 1>&2 nohup ebook-viewer "$filename" & 
-    open "$filename" ;;
-esac
-
-#sleep 1
+exec zathura "$file"

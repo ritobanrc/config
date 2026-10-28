@@ -16,6 +16,8 @@ PACMAN_PACKAGES=(
     git stow make gcc unzip curl wget tar gzip python npm rustup
     # editor
     neovim vim ripgrep fd tree-sitter-cli zathura zathura-pdf-mupdf tesseract-data-eng
+    # books and papers (zotero-bin comes from the AUR)
+    zathura-djvu calibre
     # terminal
     alacritty ttf-hack-nerd
     # shell
@@ -87,6 +89,14 @@ for pkg in "${stow_packages[@]}"; do
     done < <(find "$REPO/$pkg" -name .git -prune -o \( -type f -o -type l \) -print0)
     stow -d "$REPO" -t "$HOME" -R "$pkg"
 done
+
+if wants zotero; then
+    # The profile directory has a random name, so link user.js in by hand
+    for profile in "$HOME"/.zotero/zotero/*.default*/; do
+        [[ -d "$profile" ]] || { echo "Run Zotero once, then re-run this step" >&2; break; }
+        ln -sfn "$HOME/.config/zotero/user.js" "$profile/user.js"
+    done
+fi
 
 if wants editor && has nvim; then
     step "Installing neovim plugins"

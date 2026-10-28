@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Papers
 Comment=Read a Paper
-Exec=alacritty -e /home/ritoban/.local/bin/paper
+Exec=/home/ritoban/.local/bin/paper
 Icon=labplot-xy-interpolation-curve
 Terminal=false
 Type=Application

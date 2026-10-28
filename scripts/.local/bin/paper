@@ -1,9 +1,13 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# Pick a paper from the papers folder (Zotero's linked attachments) with
+# fuzzel and open it in zathura.
+set -euo pipefail
 
-cd "$HOME/OneDrive - UC San Diego/papers"
-filename=$(fd -e pdf | fzf)
+PAPERS="${PAPERS_DIR:-$HOME/cloud/dropbox-mit/papers}"
 
-#zathura --fork "$filename"
-open "$filename"
+name=$(find "$PAPERS" -maxdepth 1 -type f -iname '*.pdf' -printf '%f\n' |
+    sed 's/\.pdf$//I' | sort -f |
+    fuzzel --dmenu --prompt 'paper> ' --width 100) || exit 0
 
-#sleep 1
+[[ -f "$PAPERS/$name.pdf" ]] || exit 0
+exec zathura "$PAPERS/$name.pdf"

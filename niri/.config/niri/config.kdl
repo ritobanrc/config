@@ -172,6 +172,8 @@ binds {
     Mod+E      hotkey-overlay-title="File manager" { spawn "nautilus" "--new-window"; }
     Mod+Space  hotkey-overlay-title="App launcher" { spawn "fuzzel"; }
     Mod+F1     hotkey-overlay-title=null { spawn "fuzzel"; }
+    Mod+B      hotkey-overlay-title="Open a book" { spawn-sh "~/.local/bin/book"; }
+    Mod+P      hotkey-overlay-title="Open a paper" { spawn-sh "~/.local/bin/paper"; }
     Mod+Alt+L  hotkey-overlay-title="Lock screen" { spawn "swaylock" "-f" "-c" "000000"; }
 
     // Windows
