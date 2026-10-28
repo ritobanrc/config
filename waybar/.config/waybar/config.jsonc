@@ -1,0 +1,82 @@
+// Waybar for niri: a floating bar of rounded "pills" that lines up with niri's
+// 8px gaps. Workspaces on the left, every open window in the middle, status on
+// the right. Colors live in style.css.
+{
+    "layer": "top",
+    "position": "top",
+    "height": 34,
+    "margin-top": 8,
+    "margin-left": 8,
+    "margin-right": 8,
+    "spacing": 6,
+
+    "modules-left": ["niri/workspaces"],
+    "modules-center": ["wlr/taskbar"],
+    "modules-right": ["tray", "mpris", "wireplumber", "network", "cpu", "memory", "clock"],
+
+    // Empty workspaces are dimmed in style.css rather than hidden, so Alt+1..0
+    // keep their positions.
+    "niri/workspaces": {
+        "format": "{value}"
+    },
+
+    // Every open window, on all workspaces. Click to focus, middle-click to close.
+    "wlr/taskbar": {
+        "format": "{icon} {title:.24}",
+        "icon-size": 18,
+        "tooltip-format": "{title}",
+        "on-click": "activate",
+        "on-click-middle": "close",
+        "ignore-list": []
+    },
+
+    "tray": {
+        "icon-size": 16,
+        "spacing": 8
+    },
+
+    "mpris": {
+        "format": "{status_icon} {artist} – {title}",
+        "format-stopped": "",
+        "status-icons": { "playing": "󰐊", "paused": "󰏤" },
+        "title-len": 30,
+        "artist-len": 20,
+        "on-click": "playerctl play-pause"
+    },
+
+    "wireplumber": {
+        "format": "{icon} {volume}%",
+        "format-muted": "󰝟 muted",
+        "format-icons": ["󰕿", "󰖀", "󰕾"],
+        "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
+        "scroll-step": 5
+    },
+
+    "network": {
+        "format-wifi": "󰖩 {essid}",
+        "format-ethernet": "󰈀 wired",
+        "format-disconnected": "󰤭 offline",
+        "tooltip-format": "{ifname}: {ipaddr}/{cidr}",
+        "on-click": "nm-connection-editor"
+    },
+
+    "cpu": {
+        "format": "󰻠 {usage}%",
+        "interval": 5
+    },
+
+    "memory": {
+        "format": "󰍛 {percentage}%",
+        "interval": 10,
+        "tooltip-format": "{used:0.1f} / {total:0.1f} GiB"
+    },
+
+    "clock": {
+        "format": "{:%a %b %d  %H:%M}",
+        "tooltip-format": "<tt>{calendar}</tt>",
+        "calendar": {
+            "mode": "month",
+            "format": { "today": "<span color='#4a86d8'><b>{}</b></span>" }
+        }
+    }
+}
