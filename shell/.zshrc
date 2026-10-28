@@ -203,3 +203,5 @@ export PATH=$PATH:/Users/ritoban/Library/Python/3.9/bin
 export PATH=$PATH:/Users/ritoban/.ghcup/bin
 
 [[ -f ~/.cargo/env ]] && source ~/.cargo/env
+
+alias setbg="$HOME/.local/bin/setbg"

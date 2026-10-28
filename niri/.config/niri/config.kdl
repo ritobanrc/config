@@ -154,6 +154,14 @@ window-rule {
     open-floating true
 }
 
+// Firefox popups (login dialogs, the Zotero Connector item selector, ...).
+// Their title comes too late to match on, so the AutoConfig in firefox/ gives
+// them this app-id instead.
+window-rule {
+    match app-id=r#"^firefox-popup$"#
+    open-floating true
+}
+
 window-rule {
     geometry-corner-radius 6
     clip-to-geometry true

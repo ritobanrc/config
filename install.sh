@@ -3,7 +3,8 @@
 #
 # Usage: ./install.sh [--skip-packages] [stow-package...]
 #   --skip-packages   don't install system packages with pacman (no sudo needed)
-#   stow-package      which packages to stow (default: editor terminal shell)
+#   stow-package      which packages to stow (default: editor terminal shell);
+#                     "firefox" instead installs AutoConfig into /usr/lib/firefox
 #
 # Safe to re-run: existing files that would conflict with stow are moved to
 # <file>.bak.<timestamp>, and steps that are already done are skipped.
@@ -40,7 +41,7 @@ stow_packages=()
 for arg in "$@"; do
     case "$arg" in
         --skip-packages) skip_packages=1 ;;
-        -h|--help) sed -n '2,9p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+        -h|--help) sed -n '2,10p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
         *) stow_packages+=("$arg") ;;
     esac
 done
@@ -77,6 +78,7 @@ fi
 step "Stowing: ${stow_packages[*]}"
 for pkg in "${stow_packages[@]}"; do
     [[ -d "$REPO/$pkg" ]] || { echo "No such package: $pkg" >&2; exit 1; }
+    [[ "$pkg" == firefox ]] && continue  # installed system-wide below
     # Move aside anything stow would refuse to overwrite
     while IFS= read -r -d '' src; do
         rel="${src#"$REPO/$pkg/"}"
@@ -96,6 +98,14 @@ if wants zotero; then
         [[ -d "$profile" ]] || { echo "Run Zotero once, then re-run this step" >&2; break; }
         ln -sfn "$HOME/.config/zotero/user.js" "$profile/user.js"
     done
+fi
+
+if wants firefox; then
+    # AutoConfig is only read from the install directory. Copy rather than
+    # link, so a user-writable file can't run privileged code in Firefox.
+    step "Installing Firefox AutoConfig"
+    sudo install -Dm644 "$REPO/firefox/autoconfig.js" /usr/lib/firefox/defaults/pref/autoconfig.js
+    sudo install -Dm644 "$REPO/firefox/popup-class.cfg" /usr/lib/firefox/popup-class.cfg
 fi
 
 if wants editor && has nvim; then
